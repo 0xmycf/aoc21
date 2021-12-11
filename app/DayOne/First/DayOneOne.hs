@@ -4,32 +4,44 @@ module DayOne.First.DayOneOne
 ) 
 where
 
+import System.Directory (getCurrentDirectory)
+
 exin :: [Int]
 exin = [1,2,3,4,5,1,2,3,6]
--- For the first question
--- 1 no-change, 2 increase, 3 increase, 4 increase, 5 increase, 1 decrease, 2 increase 
--- should return 5
 
--- For the second question
--- 1,2,3=6, 2,3,4=9, 3,4,5=12, 4,5,1=10, 5,1,2=8, 1,2,3=6, 2,3,6=11
--- 6 no-change, 9 increase, 12 increase, 10 decrease, 8 decrease, 6 decrease, 11 increase
--- should return 3
+{- 
+
+For the first question
+    1 no-change, 2 increase, 3 increase, 4 increase, 5 increase, 1 decrease, 2 increase 
+should return 5
+
+For the second question
+    1,2,3=6, 2,3,4=9, 3,4,5=12, 4,5,1=10, 5,1,2=8, 1,2,3=6, 2,3,6=11
+    6 no-change, 9 increase, 12 increase, 10 decrease, 8 decrease, 6 decrease, 11 increase
+should return 3
+
+-}
 
 testDayOne :: IO ()
 testDayOne = do
-    let ans = mapThreeTogether [] exin
-    print (getDifference ans (head ans) [])
-    print $ getAns $ getDifference ans (head ans) []
+    putStrLn "Day One Tests..."
+    path <- getCurrentDirectory
+    list <- getLines "./app/DayOne/First/input.txt"
+    mapM_ print list
+    putStrLn "Day One Tests over.\n"
 
 getLines :: FilePath -> IO [String]
 getLines = fmap lines . readFile
 
 mainDayOne :: IO ()
 mainDayOne = do
-    list <- getLines "AOC21STACK/AOC21/app/DayOne/First/input.txt"
+    putStrLn "Day One..."
+    path <- getCurrentDirectory
+    print path
+    list <- getLines "./app/DayOne/First/input.txt"
     let ilist = mapThreeTogether [] $ map read list
-    -- print $ "ilist:: " ++ show ilist
     print $ getAns $ getDifference ilist (head ilist) []
+    putStrLn "Day One over.\n"
 
 
 whatChange :: Int -> String

@@ -1,4 +1,8 @@
-module DayTwo.First.DayTwoFirst where
+module DayTwo.First.DayTwoFirst 
+( mainDayTwo
+, testDayTwo
+)
+where
 
 {-
     General idea
@@ -12,18 +16,20 @@ module DayTwo.First.DayTwoFirst where
 -}
 
 inputPath :: String
-inputPath = "DayTwo/First/input.txt"
+inputPath = "./app/DayTwo/First/input.txt"
 
-test :: IO ()
-test = do
+testDayTwo :: IO ()
+testDayTwo = do
+    putStrLn "Day Two Tests..."
     let a = testInputf
     let b = map last a
     print b -- "3963818188357"
     -- print $ map (read . last) testInputf
     print $ foldl (\ p c -> p + read [last c]) 0 testInputf
+    putStrLn "Day Two Tests over.\n"
 
-main :: IO ()
-main = problemOne >> problemTwo
+mainDayTwo :: IO ()
+mainDayTwo = putStrLn "Day Two..." >> problemOne >> problemTwo >> putStrLn "Day Two over.\n"
 
 problemOne :: IO ()
 problemOne = do

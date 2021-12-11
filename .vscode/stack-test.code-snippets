@@ -1,0 +1,28 @@
+{
+	// Place your AOC21 workspace snippets here. Each snippet is defined under a snippet name and has a scope, prefix, body and 
+	// description. Add comma separated ids of the languages where the snippet is applicable in the scope field. If scope 
+	// is left empty or omitted, the snippet gets applied to all languages. The prefix is what is 
+	// used to trigger the snippet and the body will be expanded and inserted. Possible variables are: 
+	// $1, $2 for tab stops, $0 for the final cursor position, and ${1:label}, ${2:another} for placeholders. 
+	// Placeholders with the same ids are connected.
+	// Example:
+	"test func": {
+		"prefix": "test",
+		"body": [
+			"testDay${1:day} :: IO ()",
+			"testDay${1:day} = do",
+    		"    putStrLn \"Test Day ${1:day}...\"",
+			"    $0",
+    		"    putStrLn \"Test Day ${1:day} over.\n \""
+		],
+		"description": "Basic outline of every test function"
+	},
+	"main func": {
+		"prefix": "main",
+		"body": [
+			"mainDay${1:day} :: IO ()",
+			"mainDay${1:day} = putStrLn \"Day ${1:day}...\" >> problemOne >> problemTwo >> putStrLn \"Day ${1:day} over.\n\""
+		],
+		"description": "Basic outline of every main function"
+	}
+}

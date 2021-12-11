@@ -36,6 +36,7 @@ packages:
 # forks / in-progress versions pinned to a git hash. For example:
 #
 extra-deps:
+  -  directory-1.3.6.0
 #  - directory-1.3.6.0
 # - acme-missiles-0.3
 # - git: https://github.com/commercialhaskell/stack.git
