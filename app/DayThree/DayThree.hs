@@ -30,6 +30,17 @@ import DayThreeSrc ( getGamma, getEpsilon, multGammaEps, getOxyOrCO2, hasMoreOrL
     5. Construct Epsilon Value by converting 1 to 0 or 0 to 1
     6. Parse binary expression to decimal
     7. return binary Gamma * binary Epsilon
+
+    In the end I did not use any bitwise operators.
+    When thinking about the problem I never found a way to go through the list only once...
+    the splitting up stuff is also relatively easy to implement.
+
+    I think my problem 1 solution is okish...
+    I don't really like my problem 2 solution though... it seems very inefficient,
+    there is also no correlation between part 1 and part 2 which is sad too,
+    you should probably be able to reuse part 1 functions for part 2, which I didn't really do.
+
+    I might come back to this in the future.
 -}
 
 inputPath :: String
@@ -41,6 +52,7 @@ mainDayThree = putStrLn "Day Three..." >> problemOne >> problemTwo >> putStrLn "
 testDayThree :: IO ()
 testDayThree = do
     putStrLn "Test Day Three..."
+    putStrLn "Tests for Day Three are in the test folder."
     putStrLn "Test Day Three over.\n"
 
 

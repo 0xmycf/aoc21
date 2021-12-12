@@ -101,7 +101,7 @@ hasMoreOrLess :: Foldable t => (Int -> Int -> Bool) -> (t a, t a) -> t a
 hasMoreOrLess f (xs, ys)
     | length xs `f` length ys       = ys
     | not (length xs `f` length ys) = xs
-    | length xs == length ys        = xs -- xs will hold the '1's in the beginning!
+    | length xs == length ys        = xs -- xs will hold the 'c's in the beginning!
 
 hasMoreOrLess _ (_, _) = error "Invalid input."
 
