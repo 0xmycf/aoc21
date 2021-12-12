@@ -13,7 +13,7 @@
 			"testDay${1:day} = do",
     		"    putStrLn \"Test Day ${1:day}...\"",
 			"    $0",
-    		"    putStrLn \"Test Day ${1:day} over.\n \""
+    		"    putStrLn \"Test Day ${1:day} over.\\n \""
 		],
 		"description": "Basic outline of every test function"
 	},
@@ -21,7 +21,7 @@
 		"prefix": "main",
 		"body": [
 			"mainDay${1:day} :: IO ()",
-			"mainDay${1:day} = putStrLn \"Day ${1:day}...\" >> problemOne >> problemTwo >> putStrLn \"Day ${1:day} over.\n\""
+			"mainDay${1:day} = putStrLn \"Day ${1:day}...\" >> problemOne >> problemTwo >> putStrLn \"Day ${1:day} over.\\n\""
 		],
 		"description": "Basic outline of every main function"
 	}

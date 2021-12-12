@@ -24,6 +24,7 @@ source-repository head
 
 library
   exposed-modules:
+      DayThreeSrc
       Lib
   other-modules:
       Paths_AOC21
@@ -53,6 +54,7 @@ test-suite AOC21-test
   type: exitcode-stdio-1.0
   main-is: Spec.hs
   other-modules:
+      TestsDayThree
       Paths_AOC21
   hs-source-dirs:
       test

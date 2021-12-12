@@ -1,6 +1,7 @@
+import TestsDayThree (testDayThreeSuit)
 
 main :: IO ()
-main = print "no tests implemented"
+main = testDayThreeSuit
 
 
 
@@ -14,4 +15,4 @@ countIncreasesPart2 :: [Int] -> IO Int
 countIncreasesPart2 xs = do
     print (zip xs (drop 3 xs))
     return $ length (filter (== True) (zipWith (<) xs (drop 3 xs)))
-    -}
+-}
