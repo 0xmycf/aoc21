@@ -54,3 +54,34 @@ getFirstChar = isGreater . partition (\v -> head v == '1')
 
 multGammaEps :: String -> String -> Int
 multGammaEps xs ys = binToDec xs * binToDec ys  
+
+{-
+    Day Three Plan Problem Three
+    1. Get Input
+    2. Partition for i-th value
+    3. Hold greater list, if equal hold list with 1
+    4. if only one element in list return that element
+    5. repeat 2-5 until you have the oxygen
+    6. Repeat 2-5 with smaller list until you have CO2 value
+    7. Convert both values to decimal and multiply
+-}
+
+getFirstChars :: Char -> (([[Char]], [[Char]]) -> c) -> [[Char]] -> Int -> c
+getFirstChars c f xs i = (f . partition (\v -> (v !! i) == c)) xs
+
+-- | for hasMore pass in <, for hasLess pass in >
+hasMoreOrLess :: Foldable t => (Int -> Int -> Bool) -> (t a, t a) -> t a
+hasMoreOrLess f (xs, ys)
+    | length xs `f` length ys       = ys
+    | not (length xs `f` length ys) = xs
+    | length xs == length ys        = xs -- xs will hold the '1's in the beginning!
+
+hasMoreOrLess _ (_, _) = error "Invalid input."
+
+getOxyOrCO2 :: [String] -> ([[Char]] -> Int -> [[Char]]) -> String
+getOxyOrCO2 [x] _ = x
+getOxyOrCO2 xs  f = oxyMoxy xs 0
+    where
+        oxyMoxy :: [String] -> Int -> String
+        oxyMoxy [x] _ = x
+        oxyMoxy xs i  = oxyMoxy (f xs i) (i+1)

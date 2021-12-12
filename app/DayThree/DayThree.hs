@@ -4,7 +4,7 @@ module DayThree.DayThree
 ) where
 
 import Lib (getLines)
-import DayThreeSrc ( getGamma, getEpsilon, multGammaEps )
+import DayThreeSrc ( getGamma, getEpsilon, multGammaEps, getOxyOrCO2, hasMoreOrLess, getFirstChars )
 
 {-
     Input is 
@@ -44,7 +44,6 @@ testDayThree = do
     putStrLn "Test Day Three over.\n"
 
 
-
 problemOne :: IO ()
 problemOne = do
     lines <- getLines inputPath
@@ -53,6 +52,21 @@ problemOne = do
     print $ multGammaEps gamma eps
 
 
+{-
+    Day Three Problem Two Plan
+    1. Get Input
+    2. Partition for i-th value
+    3. Hold greater list, if equal hold list with 1
+    4. if only one element in list return that element
+    5. repeat 2-5 until you have the oxygen
+    6. Repeat 2-5 with smaller list until you have CO2 value
+    7. Convert both values to decimal and multiply
+-}
+
 problemTwo :: IO ()
-problemTwo = print "To Be implemented"
+problemTwo = do
+    lines <- getLines inputPath
+    let oxy = getOxyOrCO2 lines (getFirstChars '1' (hasMoreOrLess (<)))
+    let co2 = getOxyOrCO2 lines (getFirstChars '0' (hasMoreOrLess (>)))
+    print $ multGammaEps oxy co2
 

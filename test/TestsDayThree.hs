@@ -1,4 +1,3 @@
-{-# OPTIONS_GHC -Wno-overlapping-patterns #-}
 module TestsDayThree
 ( testDayThreeSuit
 ) where
@@ -53,11 +52,17 @@ testDayThreeSuit = do
     print $ multGammaEps ggs (getEpsilon ggs)
     print $ multGammaEps ggs (getEpsilon ggs) == 198
     print $ "Problem 2"
-    print $ getFirstChars sample == sampleOnes
-    oxy <- getOxygen sample
+    print $ getFirstChars '1' (hasMoreOrLess (<)) sample 0 == sampleOnes
+    oxy <- getOxyOrCO2 sample (getFirstChars '1' (hasMoreOrLess (<)))
     print $                  oxy == "10111"
+    co2 <- getOxyOrCO2 sample (getFirstChars '0'(hasMoreOrLess (>)))
+    print $ co2
+    print $                  co2 == "01010"
+    print $ multGammaEps co2 oxy
+    print $ multGammaEps co2 oxy == 230
     putStrLn "Test Day ThreeSuit over."
 
+getFirstChar :: [[Char]] -> Char
 getFirstChar = isGreater . partition (\v -> head v == '1')
     where
         isGreater (xs, ys)
@@ -88,17 +93,20 @@ multGammaEps xs ys = binToDec xs * binToDec ys
 
 -- | Part 2
 
-getFirstChars :: [[Char]] -> [[Char]]
-getFirstChars = hasMore . partition (\v -> head v == '1')
-    where
-        hasMore (xs, ys)
-            | length xs < length ys     = ys
-            | length xs > length ys     = xs
-            | length xs == length ys    = xs -- xs will hold the '1's in the beginning!
-        hasMore (_, _) = error "Invalid input."
+getFirstChars :: Char -> (([[Char]], [[Char]]) -> c) -> [[Char]] -> Int -> c
+getFirstChars c f xs i = (f . partition (\v -> (v !! i) == c)) xs
+
+-- | for hasMore pass in <, for hasLess pass in >
+hasMoreOrLess :: Foldable t => (Int -> Int -> Bool) -> (t a, t a) -> t a
+hasMoreOrLess f (xs, ys)
+    | length xs `f` length ys       = ys
+    | not (length xs `f` length ys) = xs
+    | length xs == length ys        = xs -- xs will hold the '1's in the beginning!
+
+hasMoreOrLess _ (_, _) = error "Invalid input."
 
 {-
-    Day Two Plan
+    Day Three Plan Problem Three
     1. Get Input
     2. Partition for i-th value
     3. Hold greater list, if equal hold list with 1
@@ -108,13 +116,13 @@ getFirstChars = hasMore . partition (\v -> head v == '1')
     7. Convert both values to decimal and multiply
 -}
 
-getOxygen :: [String] -> IO String
-getOxygen _   = error "Inf Loop" -- Remove Overlapping Pattern thingy from the top!
-getOxygen [x] = return x
-getOxygen xs  = oxyMoxy xs []
+getOxyOrCO2 :: [String] -> ([[Char]] -> Int -> [[Char]]) -> IO String
+getOxyOrCO2 [x] _ = return x
+getOxyOrCO2 xs  f = oxyMoxy xs 0
     where
-        oxyMoxy xs acc = do
-            print $ reducing xs
-            print $ getFirstChars (reducing xs)
-            print $ getFirstChars xs
-            oxyMoxy (getFirstChars (reducing xs)) []
+        oxyMoxy :: [String] -> Int -> IO String
+        oxyMoxy [x] _ = return x
+        oxyMoxy xs i  = do
+            print $ xs
+            print $ i
+            oxyMoxy (f xs i) (i+1)
