@@ -6,6 +6,9 @@ import Lib (getLines)
 import DayFourSrc
     ( prepare, mkBoard, inputBoards, parsedBoards, bToP )
 
+import qualified Data.Map as Map
+import qualified Data.Matrix as M
+
 inputPathSamples :: String
 inputPathSamples = "test/samples/input3.txt"
 
@@ -16,8 +19,11 @@ testDayFourSuit = do
     -- print $ mkBoard . prepare .  map words . take 5 $ (inputBoards lines)
     print $ parsedBoards (inputBoards lines)
     print $ map mkBoard. parsedBoards $ inputBoards lines
-    print $ bToP $ parsedBoards $ inputBoards lines
-    -- print $ parsedBoards (inputBoards lines)
+    let mapped = bToP $ parsedBoards $ inputBoards lines
+    print $ mapped
+    case Map.lookup 16777215 mapped of
+      Nothing -> error "Nothing while getting the first input of the Map!"
+      Just ma -> print $ M.unsafeGet 1 1 ma
 
 sample :: [[[Char]]]
 sample = [

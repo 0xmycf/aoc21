@@ -24,6 +24,9 @@ dependencies:
 
 library:
   source-dirs: src
+  dependencies:
+  - matrix
+  - containers
 
 executables:
   AOC21-exe:
@@ -36,6 +39,8 @@ executables:
     dependencies:
     - AOC21
     - directory
+    - matrix
+    - containers
 
 tests:
   AOC21-test:
@@ -47,3 +52,5 @@ tests:
     - -with-rtsopts=-N
     dependencies:
     - AOC21
+    - matrix
+    - containers

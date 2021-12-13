@@ -5,10 +5,8 @@ import Data.Map (Map)
 import Data.Bits ((.|.), Bits (shiftL, (.&.)))
 import qualified Data.Matrix as M
 import qualified Data.Map as Map
-import GHC.Num (minusInteger)
 
 {-
-  Nope doing the thing again Only happens with IntMaps!->| I tried a different approach (iterating through the whole matrix, because arithmetic overflow)
   General Idea for Problem One
   1. Parse input and construct the following
     1.1 A Dictionary with keys of a bitmask of all numbers inside a Board to (the Board, 1.1.1)
@@ -76,25 +74,24 @@ parsedBoards xs = map (prepare . map words) . group5 [] $ xs
 
 -- | maps the unparsed boards to a dictionary
 -- | { Bitmask => ((Num => Pos), Board BoardNumber) } 
--- bToP :: [[Int]] -> IntMap (Board BoardNumber)
-bToP :: [[Integer]] -> Map Integer (Board BoardNumber)
+-- | It is important that the keys are Integers instead if Int's, otherwise we get arithmetic overflow errors!
+bToP :: [[Int]] -> Map Integer (Board BoardNumber)
 bToP xs = Map.fromList $ prepIntMap xs 
 
--- prepIntMap :: (Bits a, Num a) => [[Integer]] -> [(a, Board BoardNumber)]
-prepIntMap :: [[Integer]] -> [(Integer, Board BoardNumber)]
+prepIntMap :: (Bits a, Num a) => [[Int]] -> [(a, Board BoardNumber)]
 prepIntMap xs = zip (cBitMask xs) (map mkBoard xs)
 
 
 -- | creates a bitmask out of a [[Int]] List as we have it.
-cBitMask :: (Foldable t, Bits a, Num a) => [t Integer] -> [a]
+cBitMask :: (Foldable t, Bits a, Num a) => [t Int] -> [a]
 cBitMask [] = []
 cBitMask xs = map (foldr biting 0) xs
     where
         biting c p = p .|. (1 `shiftL` (c - 1))
 
 -- | checks if given int is inside bitmask
-check :: Integer -> Integer -> Bool
-check n mask = (1 `shiftL` (n `minusInteger` 1)) .&. mask == (1 `shiftL` (n - 1))
+check :: (Bits a, Num a) => Int -> a -> Bool
+check n mask = (1 `shiftL` (n - 1)) .&. mask == (1 `shiftL` (n - 1))
 
 createIM :: Board BoardNumber -> Map Int Int
 createIM b = error "to be impl"

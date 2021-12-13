@@ -33,6 +33,8 @@ library
       src
   build-depends:
       base >=4.7 && <5
+    , containers
+    , matrix
   default-language: Haskell2010
 
 executable AOC21-exe
@@ -49,7 +51,9 @@ executable AOC21-exe
   build-depends:
       AOC21
     , base >=4.7 && <5
+    , containers
     , directory
+    , matrix
   default-language: Haskell2010
 
 test-suite AOC21-test
@@ -65,4 +69,6 @@ test-suite AOC21-test
   build-depends:
       AOC21
     , base >=4.7 && <5
+    , containers
+    , matrix
   default-language: Haskell2010

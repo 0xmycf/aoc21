@@ -1,7 +1,9 @@
-import TestsDayThree (testDayThreeSuit)
+import TestDayFour (testDayFourSuit)
+
 
 main :: IO ()
-main = testDayThreeSuit
+-- main = testDayThreeSuit
+main = testDayFourSuit
 
 
 

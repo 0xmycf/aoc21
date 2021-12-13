@@ -24,5 +24,34 @@
 			"mainDay${1:day} = putStrLn \"Day ${1:day}...\" >> problemOne >> problemTwo >> putStrLn \"Day ${1:day} over.\\n\""
 		],
 		"description": "Basic outline of every main function"
+	},
+	"day body" : {
+		"prefix": "body",
+		"body": [
+			"module Day${1:day}.Day${1:day}",
+			"( mainDay${1:day}",
+			", testDay${1:day}",
+			") where",
+			"",
+			"import Lib (getLines)",
+			"",
+			"inputPath :: String",
+			"inputPath = \"./app/Day${1:day}/input.txt\"",
+			"",
+			"mainDay${1:day} :: IO ()",
+			"mainDay${1:day} = putStrLn \"Day ${1:day}...\" >> problemOne >> problemTwo >> putStrLn \"Day ${1:day} over.\\n \"",
+			"",
+			"testDay${1:day} :: IO ()",
+			"testDay${1:day} = do",
+			"    putStrLn \"Test Day ${1:day}...\"",
+			"    putStrLn \"Test Day ${1:day} over.\\n\"",
+			"",
+			"",
+			"problemOne :: IO ()",
+			"problemOne = print \"to be impl\"",
+			"",
+			"problemTwo :: IO ()",
+			"problemTwo = print \"to be impl\"",
+		]
 	}
 }
