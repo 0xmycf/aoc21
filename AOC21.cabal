@@ -24,6 +24,7 @@ source-repository head
 
 library
   exposed-modules:
+      DayFourSrc
       DayThreeSrc
       Lib
   other-modules:
@@ -37,6 +38,7 @@ library
 executable AOC21-exe
   main-is: Main.hs
   other-modules:
+      DayFour.DayFour
       DayOne.First.DayOneOne
       DayThree.DayThree
       DayTwo.First.DayTwoFirst
@@ -54,6 +56,7 @@ test-suite AOC21-test
   type: exitcode-stdio-1.0
   main-is: Spec.hs
   other-modules:
+      TestDayFour
       TestsDayThree
       Paths_AOC21
   hs-source-dirs:
