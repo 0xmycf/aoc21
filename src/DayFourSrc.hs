@@ -9,15 +9,13 @@ import qualified Data.Map as Map
 {-
   General Idea for Problem One
   1. Parse input and construct the following
-    1.1 A Dictionary with keys of a bitmask of all numbers inside a Board to (the Board, 1.1.1)
-      1.1.1 A Dictionary with keys of the numbers inside the Board to their position inside the Board
-            This allows for quick access.
+    1.1 A Dictionary with keys of a bitmask of all numbers inside a Board to the Board
     1.2 A List which holds the numbers which will be drawn.
     With this I don't need to iterate over all BoardPositions
   2. fold/map through 1.2 and mark BoardPositions in 1.1
     Marking goes as follows
     2.1 Check Bitmask if drawn value is inside the dict, if yes then goto 2.2 else next mask and goto 2.1
-    2.2 Get the position for the number from 1.1.1 and mark it inside 1.1 (fst)
+    2.2 fmap through the matrix with a function that checks if the Pos at number is the value and then sets it to true
     2.3 If any value was marked, notify the row and the column in which the number resides, do as follows
       2.3.1 Extract the row and the column
       2.3.2 Iterate through both and if one is not marked then next number and goto 2. else goto 3
