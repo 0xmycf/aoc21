@@ -1,10 +1,12 @@
 module DayFourSrc where
 
 import Data.Matrix (Matrix)
-import Data.Map (Map)
+import Data.Map (Map, (!))
 import Data.Bits ((.|.), Bits (shiftL, (.&.)))
 import qualified Data.Matrix as M
 import qualified Data.Map as Map
+import Data.Semigroup (sconcat)
+import Data.List (foldl')
 
 {-
   General Idea for Problem One
@@ -28,12 +30,29 @@ import qualified Data.Map as Map
 
 type Board = Matrix
 
-data BoardNumber = Bn {number :: Int, marked :: Bool}
+data BoardNumber = Bn {number :: Int, marked :: Bool} deriving (Eq)
 
-data Pos = Pos {r, c :: Int}
+data Game = Win Int | Queue deriving (Show)
+
+instance Eq Game where
+  Win _ == Win _ = True
+  Queue == Queue = True
+  _ == _         = False
 
 instance Show BoardNumber where
   show bn = show (number bn) ++ "/" ++ show (marked bn)
+
+instance Semigroup BoardNumber where
+   (Bn a1 True)  <> (Bn b1 True)   = Bn 0 False
+   (Bn a1 True)  <> (Bn b1 False)  = Bn b1 False
+   (Bn a1 False) <> (Bn b1 True)   = Bn a1 False
+   (Bn a1 False) <> (Bn b1 False)  = Bn (a1 + b1) False
+
+concentrate :: Matrix BoardNumber -> Int
+concentrate xs = number (foldl (<>) (Bn 0 True) . M.toList $ xs)
+
+instance Ord BoardNumber where
+  Bn a _ <= Bn b _ = a <= b
 
 toBoardNumber :: Int -> BoardNumber
 toBoardNumber x = Bn x False
@@ -70,11 +89,32 @@ parsedBoards xs = map (prepare . map words) . group5 [] $ xs
     group5 _   xs             = error $ "Error while parsing " ++ show xs
 
 
+parseNums :: [String] -> [String]
+parseNums = takeWhile (',' `elem`)
+
+pToList :: [String] -> [Int]
+pToList = map read . concatMap (words . map repl)
+  where
+    repl ',' = ' '
+    repl c   = c
+
+-- | Pass in 'Lines' go get the correct answer.
+getParsedIntList :: [String] -> [Int]
+getParsedIntList xs = pToList (parseNums xs)
+
+-- | Pass in 'Lines' go get the correct answer.
+getParsedIntListBoard :: [String] -> [[Int]]
+getParsedIntListBoard = parsedBoards . inputBoards
+
+-- | Pass in 'Lines' go get the correct answer.
+getParsedBoards :: [String] -> [Board BoardNumber]
+getParsedBoards = map mkBoard . getParsedIntListBoard
+
 -- | maps the unparsed boards to a dictionary
 -- | { Bitmask => ((Num => Pos), Board BoardNumber) } 
 -- | It is important that the keys are Integers instead if Int's, otherwise we get arithmetic overflow errors!
 bToP :: [[Int]] -> Map Integer (Board BoardNumber)
-bToP xs = Map.fromList $ prepIntMap xs 
+bToP xs = Map.fromList $ prepIntMap xs
 
 prepIntMap :: (Bits a, Num a) => [[Int]] -> [(a, Board BoardNumber)]
 prepIntMap xs = zip (cBitMask xs) (map mkBoard xs)
@@ -85,11 +125,104 @@ cBitMask :: (Foldable t, Bits a, Num a) => [t Int] -> [a]
 cBitMask [] = []
 cBitMask xs = map (foldr biting 0) xs
     where
-        biting c p = p .|. (1 `shiftL` (c - 1))
+        biting c p = p .|. 1 `shiftL` (c - 1)
 
 -- | checks if given int is inside bitmask
 check :: (Bits a, Num a) => Int -> a -> Bool
-check n mask = (1 `shiftL` (n - 1)) .&. mask == (1 `shiftL` (n - 1))
+check n mask = 1 `shiftL` (n - 1) .&. mask == 1 `shiftL` (n - 1)
 
-createIM :: Board BoardNumber -> Map Int Int
-createIM b = error "to be impl"
+-- | Takes in the Boards as well as the RNG Num List
+drawAndMark :: Map Integer (Board BoardNumber) -> [Int] -> Game -- Always returns Queue.. Which shouldn't happen...
+drawAndMark ms = mark Queue
+  where
+    mark :: Game -> [Int] -> Game
+    mark g []     = g
+    mark (Win a) x= Win a
+    mark _ (x:xs) = mark (Map.foldrWithKey (\ k _ g -> if (g == Queue) && check x k then notify x k ms else g) Queue ms) xs
+
+
+-- | I don't know how to go through the Board, mark the correct fields AND return the correct result...
+notify :: Int -> Integer -> Map Integer (Board BoardNumber) -> Game
+notify i k ms = bMark (ms ! k)
+  where
+    bMark :: Board BoardNumber -> Game
+    bMark b = do
+      -- This part should get thoroughly tested
+       let new = M.mapPos swapAndNotify b
+       let rowCheck = all (\v ->  and . M.toList . fmap marked . M.submatrix v v 1 5 $ b) [1..5]
+       let colCheck = all (\v ->  and . M.toList . fmap marked . M.submatrix 1 5 v v $ b) [1..5]
+       if rowCheck || colCheck
+       then Win (i * concentrate new)
+       else Queue
+
+      --  if marked (foldl (<>) (Bn 0 True) . M.toList $ new)
+      --     -- this is always false ... I need to iterate through all rows/columns and see if all are marked
+      --     -- If yes => then I need to call that method and retrieve the value and * with i.
+      --  then Win 2
+      --  else Queue
+        where
+          swapAndNotify (r,c) a = -- idk how to safe r and c to check ... I either just check every Row / Column or I safe it to a file ... which is very scuffed.
+            if number a == i
+            then Bn (number a) True
+            else a
+
+            -- if number a == i -- Bn (number a) True 
+            -- then do
+            --   let row = and . M.toList . fmap marked . M.submatrix r r 1 5 $ b
+            --   if row
+            --   then Win (2)             -- to to changed
+            --   else Queue               -- to to changed
+            -- else Queue
+
+      -- let indices = [(a,b) | a <- [1..5], b <- [1..5]]
+      -- goThroughBoard indices Queue
+      --   where
+      --     goThroughBoard :: [(Int, Int)] -> Game -> Game
+      --     goThroughBoard []     acc = acc
+      --     goThroughBoard (x:xs) acc = checkElem
+      --       where
+      --         checkElem :: Game
+      --         checkElem =
+      --           if number (b M.! x) == i
+      --           then do
+      --             goThroughBoard xs (Win 4)
+      --           else
+      --             goThroughBoard xs Queue
+
+
+
+-- | Solution for Problem 1 Part 2...
+{-
+  Since I don't know how to effectively traverse the Matrix I had to change my initial plan...
+  I will now store all Boards in Matrices which are stored in a List.
+-}
+
+-- type Board = Matrix
+
+-- data BoardNumber = Bn {number :: Int, marked :: Bool} deriving (Eq)
+
+-- data Game = Win Int | Queue deriving (Show)
+
+-- instance Show BoardNumber where
+--   show bn = show (number bn) ++ "/" ++ show (marked bn)
+
+-- instance Semigroup BoardNumber where
+--    (Bn a1 True)  <> (Bn b1 True)   = Bn 0 False
+--    (Bn a1 True)  <> (Bn b1 False)  = Bn b1 False
+--    (Bn a1 False) <> (Bn b1 True)   = Bn a1 False
+--    (Bn a1 False) <> (Bn b1 False)  = Bn (a1 + b1) False
+
+-- instance Ord BoardNumber where
+--   Bn a _ <= Bn b _  = a <= b
+
+-- toBoardNumber :: Int -> BoardNumber
+-- toBoardNumber x = Bn x False
+
+-- mkBoard :: [Int] -> Board BoardNumber
+-- mkBoard [] = M.fromList 5 5 (replicate 25 (toBoardNumber 0))
+-- mkBoard xs = M.fromList 5 5 (map toBoardNumber xs)
+
+-- drawAndMark :: [Board BoardNumber] -> [Int] -> Int
+-- drawAndMark bs = foldl' mark 0 -- (\a b -> b)
+--   where
+--     mark i j = M.foldl
