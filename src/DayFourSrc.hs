@@ -178,3 +178,45 @@ notify i k ms = bMark (ms ! k)
             if number a == i
             then Bn (number a) True
             else a
+
+
+--   I do not want to put them in the same method, I want it to be split this time.
+-- | Changed slightly to fit Part 2
+-- | If the Board wins and if the Board is not the only Board in the Map,
+-- |  reduce the Map by that Board
+-- |  else concentrate the Board.
+notifyPart2 :: Int -> Integer -> Map Integer (Board BoardNumber) -> Game
+notifyPart2 i k ms = bMark (ms ! k)
+  where
+    bMark :: Board BoardNumber -> Game
+    bMark b = do
+       let new = M.mapPos swapAndNotify b
+       let rowCheck = any (\v ->  and . M.toList . fmap marked . M.submatrix v v 1 5 $ new) [1..5]
+       let colCheck = any (\v ->  and . M.toList . fmap marked . M.submatrix 1 5 v v $ new) [1..5]
+       if rowCheck || colCheck
+       then checkWin new -- DFS.Win (i * concentrate new)
+       else Queue (Map.adjust (const new) k ms)
+        where
+          swapAndNotify _ a =
+            if number a == i
+            then Bn (number a) True
+            else a
+          checkWin :: Board BoardNumber -> Game
+          checkWin mx =
+              if length (Map.keys ms) /= 1
+              then Queue (Map.delete k ms)
+              else Win (i * concentrate mx)
+
+-- | I wanted to add Notify as a Parameter, but it would have been too long, so I just made a new Function.
+drawAndMarkPart2 :: Map Integer (Board BoardNumber) -> [Int] -> Game 
+drawAndMarkPart2 ms = mark (Queue ms)
+  where
+    mark :: Game -> [Int] -> Game
+    mark g []             = if isQueue g then error "No winner!" else g
+    mark (Win a) x        = Win a
+    mark (Queue m) (x:xs) = do
+        mark (Map.foldrWithKey (\ k _ g -> do
+            case g of
+                (Win a)     -> Win a                                    -- If it is a Win, short circuit <- This is monadic behavior, but I couldn't be bothered to look into that more... maybe some other time when I want to tidy this up a bit.
+                (Queue map) -> if check x k then notifyPart2 x k map else g) -- This part was very important, if I wouldn't notify map, I would not update all Maps!
+            (Queue m) m) xs

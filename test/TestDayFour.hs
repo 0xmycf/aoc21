@@ -137,7 +137,6 @@ notify i k ms = bMark (ms ! k)
   where
     bMark :: DFS.Board BoardNumber -> DFS.Game
     bMark b = do
-      -- This part should get thoroughly tested
        let new = M.mapPos swapAndNotify b
        let rowCheck = any (\v ->  and . M.toList . fmap marked . M.submatrix v v 1 5 $ new) [1..5]
        let colCheck = any (\v ->  and . M.toList . fmap marked . M.submatrix 1 5 v v $ new) [1..5]
@@ -149,3 +148,4 @@ notify i k ms = bMark (ms ! k)
             if number a == i
             then DFS.Bn (number a) True
             else a
+ 
