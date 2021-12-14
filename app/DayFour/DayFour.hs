@@ -4,6 +4,7 @@ module DayFour.DayFour
 ) where
 
 import Lib (getLines)
+import DayFourSrc (drawAndMark, getParsedBoards, getParsedIntList, bToP, parsedBoards, inputBoards, pToList, parseNums)
 
 inputPath :: String
 inputPath = "./app/DayFour/input.txt"
@@ -20,7 +21,8 @@ testDayFour = do
 problemOne :: IO ()
 problemOne = do
     lines <- getLines inputPath
-    mapM_ print lines
+    let mapped = bToP $ parsedBoards $ inputBoards lines
+    print $ drawAndMark mapped (pToList (parseNums lines))
 
 problemTwo :: IO ()
 problemTwo = print "to be impl"

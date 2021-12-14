@@ -32,16 +32,29 @@ type Board = Matrix
 
 data BoardNumber = Bn {number :: Int, marked :: Bool} deriving (Eq)
 
-data Game = Win Int | Queue deriving (Show)
+data Game = Win Int | Queue (Map Integer (Board BoardNumber))
 
+instance Show Game where
+  show (Win   a) = "Win " ++ show a
+  show (Queue _) = "Queue"
+
+-- | Might change later.
 instance Eq Game where
-  Win _ == Win _ = True
-  Queue == Queue = True
-  _ == _         = False
+  Win _   == Win _   = True
+  Queue _ == Queue _ = True
+  _       == _       = False
+
+isQueue :: Game -> Bool
+isQueue (Win   _) = False
+isQueue (Queue _) = True
+
+isWin :: Game -> Bool
+isWin = not . isQueue
 
 instance Show BoardNumber where
   show bn = show (number bn) ++ "/" ++ show (marked bn)
 
+-- | This allows for quick concentration of the game points.
 instance Semigroup BoardNumber where
    (Bn a1 True)  <> (Bn b1 True)   = Bn 0 False
    (Bn a1 True)  <> (Bn b1 False)  = Bn b1 False
@@ -111,7 +124,7 @@ getParsedBoards :: [String] -> [Board BoardNumber]
 getParsedBoards = map mkBoard . getParsedIntListBoard
 
 -- | maps the unparsed boards to a dictionary
--- | { Bitmask => ((Num => Pos), Board BoardNumber) } 
+-- | { Bitmask => Board BoardNumber } 
 -- | It is important that the keys are Integers instead if Int's, otherwise we get arithmetic overflow errors!
 bToP :: [[Int]] -> Map Integer (Board BoardNumber)
 bToP xs = Map.fromList $ prepIntMap xs
@@ -131,17 +144,23 @@ cBitMask xs = map (foldr biting 0) xs
 check :: (Bits a, Num a) => Int -> a -> Bool
 check n mask = 1 `shiftL` (n - 1) .&. mask == 1 `shiftL` (n - 1)
 
--- | Takes in the Boards as well as the RNG Num List
-drawAndMark :: Map Integer (Board BoardNumber) -> [Int] -> Game -- Always returns Queue.. Which shouldn't happen...
-drawAndMark ms = mark Queue
+
+-- I wonder if there is a way to write this less confusing...
+-- | Takes in the Boards as well as the RNG Num List, returns a Win
+drawAndMark :: Map Integer (Board BoardNumber) -> [Int] -> Game 
+drawAndMark ms = mark (Queue ms)
   where
     mark :: Game -> [Int] -> Game
-    mark g []     = g
-    mark (Win a) x= Win a
-    mark _ (x:xs) = mark (Map.foldrWithKey (\ k _ g -> if (g == Queue) && check x k then notify x k ms else g) Queue ms) xs
+    mark g []             = if isQueue g then error "No winner!" else g
+    mark (Win a) x        = Win a
+    mark (Queue m) (x:xs) = do
+        mark (Map.foldrWithKey (\ k _ g -> do
+            case g of
+                (Win a)     -> Win a                                    -- If it is a Win, short circuit <- This is monadic behavior, but I couldn't be bothered to look into that more... maybe some other time when I want to tidy this up a bit.
+                (Queue map) -> if check x k then notify x k map else g) -- This part was very important, if I wouldn't notify map, I would not update all Maps!
+            (Queue m) m) xs
 
-
--- | I don't know how to go through the Board, mark the correct fields AND return the correct result...
+-- | Updates the board and if its a Win returns a Win.
 notify :: Int -> Integer -> Map Integer (Board BoardNumber) -> Game
 notify i k ms = bMark (ms ! k)
   where
@@ -149,80 +168,13 @@ notify i k ms = bMark (ms ! k)
     bMark b = do
       -- This part should get thoroughly tested
        let new = M.mapPos swapAndNotify b
-       let rowCheck = all (\v ->  and . M.toList . fmap marked . M.submatrix v v 1 5 $ b) [1..5]
-       let colCheck = all (\v ->  and . M.toList . fmap marked . M.submatrix 1 5 v v $ b) [1..5]
+       let rowCheck = any (\v ->  and . M.toList . fmap marked . M.submatrix v v 1 5 $ new) [1..5]
+       let colCheck = any (\v ->  and . M.toList . fmap marked . M.submatrix 1 5 v v $ new) [1..5]
        if rowCheck || colCheck
        then Win (i * concentrate new)
-       else Queue
-
-      --  if marked (foldl (<>) (Bn 0 True) . M.toList $ new)
-      --     -- this is always false ... I need to iterate through all rows/columns and see if all are marked
-      --     -- If yes => then I need to call that method and retrieve the value and * with i.
-      --  then Win 2
-      --  else Queue
+       else Queue (Map.adjust (const new) k ms)
         where
-          swapAndNotify (r,c) a = -- idk how to safe r and c to check ... I either just check every Row / Column or I safe it to a file ... which is very scuffed.
+          swapAndNotify _ a =
             if number a == i
             then Bn (number a) True
             else a
-
-            -- if number a == i -- Bn (number a) True 
-            -- then do
-            --   let row = and . M.toList . fmap marked . M.submatrix r r 1 5 $ b
-            --   if row
-            --   then Win (2)             -- to to changed
-            --   else Queue               -- to to changed
-            -- else Queue
-
-      -- let indices = [(a,b) | a <- [1..5], b <- [1..5]]
-      -- goThroughBoard indices Queue
-      --   where
-      --     goThroughBoard :: [(Int, Int)] -> Game -> Game
-      --     goThroughBoard []     acc = acc
-      --     goThroughBoard (x:xs) acc = checkElem
-      --       where
-      --         checkElem :: Game
-      --         checkElem =
-      --           if number (b M.! x) == i
-      --           then do
-      --             goThroughBoard xs (Win 4)
-      --           else
-      --             goThroughBoard xs Queue
-
-
-
--- | Solution for Problem 1 Part 2...
-{-
-  Since I don't know how to effectively traverse the Matrix I had to change my initial plan...
-  I will now store all Boards in Matrices which are stored in a List.
--}
-
--- type Board = Matrix
-
--- data BoardNumber = Bn {number :: Int, marked :: Bool} deriving (Eq)
-
--- data Game = Win Int | Queue deriving (Show)
-
--- instance Show BoardNumber where
---   show bn = show (number bn) ++ "/" ++ show (marked bn)
-
--- instance Semigroup BoardNumber where
---    (Bn a1 True)  <> (Bn b1 True)   = Bn 0 False
---    (Bn a1 True)  <> (Bn b1 False)  = Bn b1 False
---    (Bn a1 False) <> (Bn b1 True)   = Bn a1 False
---    (Bn a1 False) <> (Bn b1 False)  = Bn (a1 + b1) False
-
--- instance Ord BoardNumber where
---   Bn a _ <= Bn b _  = a <= b
-
--- toBoardNumber :: Int -> BoardNumber
--- toBoardNumber x = Bn x False
-
--- mkBoard :: [Int] -> Board BoardNumber
--- mkBoard [] = M.fromList 5 5 (replicate 25 (toBoardNumber 0))
--- mkBoard xs = M.fromList 5 5 (map toBoardNumber xs)
-
--- drawAndMark :: [Board BoardNumber] -> [Int] -> Int
--- drawAndMark bs = foldl' mark 0 -- (\a b -> b)
---   where
---     mark i j = M.foldl
