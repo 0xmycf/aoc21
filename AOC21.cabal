@@ -24,6 +24,7 @@ source-repository head
 
 library
   exposed-modules:
+      DayFiveSrc
       DayFourSrc
       DayThreeSrc
       Lib
@@ -35,11 +36,13 @@ library
       base >=4.7 && <5
     , containers
     , matrix
+    , parsec
   default-language: Haskell2010
 
 executable AOC21-exe
   main-is: Main.hs
   other-modules:
+      DayFive.DayFive
       DayFour.DayFour
       DayOne.First.DayOneOne
       DayThree.DayThree
@@ -54,12 +57,14 @@ executable AOC21-exe
     , containers
     , directory
     , matrix
+    , parsec
   default-language: Haskell2010
 
 test-suite AOC21-test
   type: exitcode-stdio-1.0
   main-is: Spec.hs
   other-modules:
+      TestDayFive
       TestDayFour
       TestsDayThree
       Paths_AOC21
@@ -71,4 +76,5 @@ test-suite AOC21-test
     , base >=4.7 && <5
     , containers
     , matrix
+    , parsec
   default-language: Haskell2010

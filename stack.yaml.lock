@@ -25,6 +25,13 @@ packages:
       sha256: 86234e3221f6fa50e82d860a8428005ac3ff19fea92103ff79a3047cd5cd1625
   original:
     hackage: containers-0.6.5.1
+- completed:
+    hackage: parsec-3.1.14.0@sha256:03c7a32711ca7e0066d29e32a602599ab0d8902061e2a24e08e2ab480ac0c55c,4356
+    pantry-tree:
+      size: 2574
+      sha256: 248ed5f32959a83bce5b4932f87cde148cdf414b54cfe59e5bc3e4e3f544c16a
+  original:
+    hackage: parsec-3.1.14.0
 snapshots:
 - completed:
     size: 586296

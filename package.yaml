@@ -27,6 +27,7 @@ library:
   dependencies:
   - matrix
   - containers
+  - parsec
 
 executables:
   AOC21-exe:
@@ -41,6 +42,7 @@ executables:
     - directory
     - matrix
     - containers
+    - parsec
 
 tests:
   AOC21-test:
@@ -54,3 +56,4 @@ tests:
     - AOC21
     - matrix
     - containers
+    - parsec

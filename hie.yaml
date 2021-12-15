@@ -1,25 +1,28 @@
 cradle:
-  stack:
-    - path: "./src"
-      component: "AOC21:lib"
+  cabal:
+    - path: "src"
+      component: "lib:AOC21"
 
-    - path: "./app/Main.hs"
+    - path: "app/Main.hs"
       component: "AOC21:exe:AOC21-exe"
 
-    - path: "./app/DayFour/DayFour.hs"
+    - path: "app/DayFive/DayFive.hs"
       component: "AOC21:exe:AOC21-exe"
 
-    - path: "./app/DayOne/First/DayOneOne.hs"
+    - path: "app/DayFour/DayFour.hs"
       component: "AOC21:exe:AOC21-exe"
 
-    - path: "./app/DayThree/DayThree.hs"
+    - path: "app/DayOne/First/DayOneOne.hs"
       component: "AOC21:exe:AOC21-exe"
 
-    - path: "./app/DayTwo/First/DayTwoFirst.hs"
+    - path: "app/DayThree/DayThree.hs"
       component: "AOC21:exe:AOC21-exe"
 
-    - path: "./app/Paths_AOC21.hs"
+    - path: "app/DayTwo/First/DayTwoFirst.hs"
       component: "AOC21:exe:AOC21-exe"
 
-    - path: "./test"
+    - path: "app/Paths_AOC21.hs"
+      component: "AOC21:exe:AOC21-exe"
+
+    - path: "test"
       component: "AOC21:test:AOC21-test"

@@ -1,11 +1,9 @@
-import TestDayFour (testDayFourSuit)
-
+import TestDayFive (testDayFiveSuit)
 
 main :: IO ()
 -- main = testDayThreeSuit
-main = testDayFourSuit
-
-
+-- main = testDayFourSuit
+main = testDayFiveSuit
 
 {-
     Some stuff I tried for day one after reading another solution
