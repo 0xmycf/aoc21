@@ -82,18 +82,18 @@ sep = Parsec.spaces >> arrow >> Parsec.spaces
     where arrow = Parsec.many $ Parsec.char '-' >> Parsec.char '>'
 
 -- | Creates a Map of V2 a a to Int based on the interceptions from a list of LineBs
-mv2ToInt :: (Ord a, Enum a) => [LineB a] -> Map (V2 a) Int
+mv2ToInt :: (Ord a, Enum a, Num a) => [LineB a] -> Map (V2 a) Int
 mv2ToInt = mapping Map.empty
     where
         mapping acc []     = acc
         mapping acc (LineB (V2 f1 f2) (V2 t1 t2) b a:xs)
-            | isVertOrHoriz b  =
-                if Vertical == b
-                then
-                    mapping (foldr (\c p -> Map.insertWith (+) c 1 p) acc [V2 a' b | let a' = a, b <- sorting f2 t2]) xs
-                else
-                    mapping (foldr (\c p -> Map.insertWith (+) c 1 p) acc [V2 b a' | let a' = a, b <- sorting f1 t1]) xs
-            | otherwise        = mapping acc xs                               -- skip for now
+            | Vertical   == b = mapping (folding acc [V2 a' b' | let a' = a  , b' <- sorting f2 t2]) xs
+            | Horizontal == b = mapping (folding acc [V2 b' a' | let a' = a  , b' <- sorting f1 t1]) xs
+            | Up         == b = mapping (folding acc [V2 a' b' | a' <- sorting f1 t1, b' <- sorting f2 t2, a' + b' == f1 + f2]) xs
+            | Down       == b = mapping (folding acc [V2 a' b' | a' <- sorting f1 t1, b' <- sorting f2 t2, a' - b' == f1 - f2]) xs
+            | otherwise       = error "Error while creating the map"
+            where
+                folding acc' xs = foldr (\c p -> Map.insertWith (+) c 1 p) acc' xs
 
 -- | takes in two numbers and constructs a list out if them.
 sorting :: (Ord a, Enum a) => a -> a -> [a]

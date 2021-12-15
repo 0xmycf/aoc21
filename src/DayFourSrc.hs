@@ -1,13 +1,31 @@
-module DayFourSrc where
+module DayFourSrc 
+(prepare,
+  mkBoard,
+  inputBoards,
+  parsedBoards,
+  pToList,
+  parseNums,
+  bToP,
+  drawAndMark,
+  Board,
+  Game (Win, Queue),
+  BoardNumber (Bn ,marked, number),
+  isQueue,
+  getParsedBoards,
+  getParsedIntList,
+  drawAndMarkPart2,
+  check,
+  concentrate
+) where
 
 import Data.Matrix (Matrix)
 import Data.Map (Map, (!))
 import Data.Bits ((.|.), Bits (shiftL, (.&.)))
-import qualified Data.Matrix as M
-import qualified Data.Map as Map
 import Data.Semigroup (sconcat)
 import Data.List (foldl')
 
+import qualified Data.Matrix as M
+import qualified Data.Map    as Map
 {-
   General Idea for Problem One
   1. Parse input and construct the following

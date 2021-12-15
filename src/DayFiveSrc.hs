@@ -1,19 +1,14 @@
 {-# LANGUAGE FlexibleContexts #-}
 module DayFiveSrc
-( mapParseToPair
-, parse
-, getVhs
-, intersect
-, intersectBool
-, intersectP
-, mkLine
+( parse
 ) where
 
 import Data.Functor.Identity (Identity)
 import Text.Parsec (ParsecT)
-import qualified Text.Parsec as Parsec
 import Data.List (sort)
-import qualified Data.Set as Set
+
+import qualified Text.Parsec as Parsec
+import qualified Data.Set    as Set
 
 -- | Holds the point where the line starts to its endpoint.
 -- | It also contains a Boolean which indicates if the line will be horizontal or vertical.
@@ -68,6 +63,7 @@ sep = Parsec.spaces >> arrow >> Parsec.spaces
 -- | Generates the actual Line from starting point to finish
 -- | Assumes that diagonals will lay on diagonals like 
 -- | [(1,4),(2,3),(3,2),(4,1)] or [(1,1),(2,2),(3,3),(4,4)]
+-- | This function doesn't work properly
 mkLine :: (Num a, Enum a, Ord a) => Line a -> [(a,a)]
 mkLine (Line f t b) = if b then vhline else diagline
     where
