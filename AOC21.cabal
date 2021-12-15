@@ -25,6 +25,7 @@ source-repository head
 library
   exposed-modules:
       DayFiveSrc
+      DayFiveSrcPartTwo
       DayFourSrc
       DayThreeSrc
       Lib
@@ -35,6 +36,7 @@ library
   build-depends:
       base >=4.7 && <5
     , containers
+    , linear
     , matrix
     , parsec
   default-language: Haskell2010
@@ -56,6 +58,7 @@ executable AOC21-exe
     , base >=4.7 && <5
     , containers
     , directory
+    , linear
     , matrix
     , parsec
   default-language: Haskell2010
@@ -75,6 +78,7 @@ test-suite AOC21-test
       AOC21
     , base >=4.7 && <5
     , containers
+    , linear
     , matrix
     , parsec
   default-language: Haskell2010

@@ -28,6 +28,7 @@ library:
   - matrix
   - containers
   - parsec
+  - linear
 
 executables:
   AOC21-exe:
@@ -43,6 +44,7 @@ executables:
     - matrix
     - containers
     - parsec
+    - linear
 
 tests:
   AOC21-test:
@@ -57,3 +59,4 @@ tests:
     - matrix
     - containers
     - parsec
+    - linear
