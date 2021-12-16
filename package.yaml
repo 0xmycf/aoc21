@@ -45,6 +45,7 @@ executables:
     - containers
     - parsec
     - linear
+    - criterion
 
 tests:
   AOC21-test:

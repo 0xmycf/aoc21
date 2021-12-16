@@ -47,6 +47,7 @@ executable AOC21-exe
       DayFive.DayFive
       DayFour.DayFour
       DayOne.First.DayOneOne
+      DaySix.DaySix
       DayThree.DayThree
       DayTwo.First.DayTwoFirst
       Paths_AOC21
@@ -57,6 +58,7 @@ executable AOC21-exe
       AOC21
     , base >=4.7 && <5
     , containers
+    , criterion
     , directory
     , linear
     , matrix

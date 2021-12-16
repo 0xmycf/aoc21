@@ -1,9 +1,15 @@
 module Main where
+  
+import DayFiveSrc (parse)
 import DayOne.First.DayOneOne (mainDayOne, testDayOne)
 import DayTwo.First.DayTwoFirst (mainDayTwo, testDayTwo)
 import DayThree.DayThree ( mainDayThree, testDayThree )
 import DayFour.DayFour (mainDayFour, testDayFour)
 import DayFive.DayFive ( mainDayFive, testDayFive )
+
+import qualified Criterion
+import qualified Criterion.Main
+import DaySix.DaySix (mainDaySix, testDaySix)
 
 main :: IO ()
 main = do
@@ -22,4 +28,10 @@ main = do
       "4t"      -> testDayFour   
       "5"       -> mainDayFive      -- main 5
       "5t"      -> testDayFive   
+      "6"       -> mainDaySix      -- main 5
+      "6t"      -> testDaySix   
+      -- "bm"      -> Criterion.Main.defaultMain 
+      --              [ Criterion.bench "Day 5" (Criterion.nfIO DayFive.problemTwo)
+                    
+      --              ]
       _         -> error "Please enter test or run or num(t)"

@@ -1,6 +1,7 @@
 module DayFive.DayFive
 ( mainDayFive
 , testDayFive
+, problemTwo
 ) where
 
 import DayFiveSrc (parse)
@@ -19,6 +20,7 @@ testDayFive = do
     putStrLn "Test Day Five..."
     putStrLn "Test Day Five over.\n"
 
+
 problemOneTwo :: IO ()
 problemOneTwo = do
     file <- readFile "app/DayFive/input.txt"
@@ -26,7 +28,15 @@ problemOneTwo = do
         Left pe   -> print pe
         Right lis -> print $ length . filter (/=1) . MapS.elems . DayFive.mv2ToInt . DayFive.getVertAndHoriz $ lis
 
-problemTwo :: IO () -- 15203 too low... There must be a mistake in my code...
+
+{- When I used nfIO
+time                 1.370 s    (1.322 s .. 1.403 s)
+                     1.000 R²   (1.000 R² .. 1.000 R²)
+mean                 1.352 s    (1.340 s .. 1.360 s)
+std dev              11.52 ms   (5.066 ms .. 15.04 ms)
+variance introduced by outliers: 19% (moderately inflated)
+-}
+problemTwo :: IO ()
 problemTwo = do
     file <- readFile "app/DayFive/input.txt"
     case parse DayFive.mapParseToPair file of
