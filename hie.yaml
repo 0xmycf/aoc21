@@ -15,6 +15,9 @@ cradle:
     - path: "app/DayOne/First/DayOneOne.hs"
       component: "AOC21:exe:AOC21-exe"
 
+    - path: "app/DaySix/DaySix.hs"
+      component: "AOC21:exe:AOC21-exe"
+
     - path: "app/DayThree/DayThree.hs"
       component: "AOC21:exe:AOC21-exe"
 
@@ -26,3 +29,9 @@ cradle:
 
     - path: "test"
       component: "AOC21:test:AOC21-test"
+
+    - path: "bench/Bench.hs"
+      component: "AOC21:bench:AOC21-bench"
+
+    - path: "bench/Paths_AOC21.hs"
+      component: "AOC21:bench:AOC21-bench"

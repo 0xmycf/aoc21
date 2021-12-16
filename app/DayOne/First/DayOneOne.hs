@@ -4,8 +4,6 @@ module DayOne.First.DayOneOne
 ) 
 where
 
-import System.Directory (getCurrentDirectory)
-
 exin :: [Int]
 exin = [1,2,3,4,5,1,2,3,6]
 
@@ -25,7 +23,6 @@ should return 3
 testDayOne :: IO ()
 testDayOne = do
     putStrLn "Day One Tests..."
-    path <- getCurrentDirectory
     list <- getLines "./app/DayOne/First/input.txt"
     mapM_ print list
     putStrLn "Day One Tests over.\n"
@@ -36,8 +33,6 @@ getLines = fmap lines . readFile
 mainDayOne :: IO ()
 mainDayOne = do
     putStrLn "Day One..."
-    path <- getCurrentDirectory
-    print path
     list <- getLines "./app/DayOne/First/input.txt"
     let ilist = mapThreeTogether [] $ map read list
     print $ getAns $ getDifference ilist (head ilist) []

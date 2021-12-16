@@ -7,8 +7,8 @@ import DayThree.DayThree ( mainDayThree, testDayThree )
 import DayFour.DayFour (mainDayFour, testDayFour)
 import DayFive.DayFive ( mainDayFive, testDayFive )
 
-import qualified Criterion
-import qualified Criterion.Main
+-- import qualified Criterion
+-- import qualified Criterion.Main
 import DaySix.DaySix (mainDaySix, testDaySix)
 
 main :: IO ()
@@ -30,8 +30,4 @@ main = do
       "5t"      -> testDayFive   
       "6"       -> mainDaySix      -- main 5
       "6t"      -> testDaySix   
-      -- "bm"      -> Criterion.Main.defaultMain 
-      --              [ Criterion.bench "Day 5" (Criterion.nfIO DayFive.problemTwo)
-                    
-      --              ]
-      _         -> error "Please enter test or run or num(t)"
+      _         -> error $ "Please enter test or run or num(t). Available Nums are: " ++ show [1..6]

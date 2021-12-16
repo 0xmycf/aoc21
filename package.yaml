@@ -21,14 +21,13 @@ description:         Please see the README on GitHub at <https://github.com/0xmy
 
 dependencies:
 - base >= 4.7 && < 5
+- matrix
+- containers
+- parsec
+- linear
 
 library:
   source-dirs: src
-  dependencies:
-  - matrix
-  - containers
-  - parsec
-  - linear
 
 executables:
   AOC21-exe:
@@ -40,12 +39,6 @@ executables:
     - -with-rtsopts=-N
     dependencies:
     - AOC21
-    - directory
-    - matrix
-    - containers
-    - parsec
-    - linear
-    - criterion
 
 tests:
   AOC21-test:
@@ -57,7 +50,13 @@ tests:
     - -with-rtsopts=-N
     dependencies:
     - AOC21
-    - matrix
-    - containers
-    - parsec
-    - linear
+
+benchmarks:
+  AOC21-bench:
+    main:                Bench.hs
+    source-dirs:         bench
+    ghc-options:
+    - -O2
+    dependencies:
+    - AOC21
+    - criterion
