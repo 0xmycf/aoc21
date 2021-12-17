@@ -26,7 +26,7 @@ problemOne = commaListParser inputPath >>= print . fmap (foldr (\x acc -> abs (x
 
 problemTwo :: IO ()
 problemTwo = commaListParser inputPath >>= print . fmap (foldr (\x acc -> abs(sum[1..(abs(x-479))])+acc) 0 .sort) 
--- 479 is the average of the (inputList + 1)
+-- 479 is the mean of the (inputList + 1)
 -- [1..(abs(x-479))] norms 479 to fit a range that has a fitting range for the position
 -- then it yields the numbers 1+2+3... etc until the destination is reached.
 -- The sum of this list is the amount of fuel needed.
