@@ -27,6 +27,7 @@ library
       DayFiveSrc
       DayFiveSrcPartTwo
       DayFourSrc
+      DaySix.DaySix
       DayThreeSrc
       Lib
   other-modules:
@@ -47,7 +48,6 @@ executable AOC21-exe
       DayFive.DayFive
       DayFour.DayFour
       DayOne.First.DayOneOne
-      DaySix.DaySix
       DayThree.DayThree
       DayTwo.First.DayTwoFirst
       Paths_AOC21

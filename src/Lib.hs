@@ -12,3 +12,7 @@ getLines = fmap lines . readFile
 -- | Shortcut for parsing a string with Parsec
 parse :: Parsec.Stream s Identity t => Parsec.Parsec s () a -> s -> Either Parsec.ParseError a
 parse rule = Parsec.parse rule "(source)"
+
+-- | maps indexed
+mapIdx :: (a -> Int -> b) -> [a] -> [b]
+mapIdx f l = zipWith f l [0..]
