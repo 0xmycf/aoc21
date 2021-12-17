@@ -49,7 +49,7 @@ problemTwo = do
 
 
 
--- My previous tires... Ill keep them as a reminder...
+-- My previous tries... Ill keep them as a reminder...
 --
 -- Problem One 
 --
@@ -79,8 +79,8 @@ problemTwo = do
 --             where
 --                 calc acc []      = Set.fromList . concat $ acc 
 --                 calc acc (l1:xs) = calc (Set.insert (concatMap (\l2-> Set.elems $ l1 `intersectP` l2) xs) acc) xs
-
-
+--
+--
 -- problemTwo2 :: IO ()
 -- problemTwo2 = do
 --     file <- readFile inputPath

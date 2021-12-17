@@ -1,14 +1,16 @@
 
-import Criterion (bench, whnf)
-import qualified Criterion.Main      as CMain
+import Criterion (bench, whnf, bgroup, nfIO)
+import qualified Criterion.Main as CMain
+import qualified DaySix.DaySix  as DaySix
 
 
 main :: IO ()
 main = do
-    CMain.defaultMain 
-        [ bench "example" $ whnf exampleBench 100000000
-        ] 
-
+    CMain.defaultMain [
+      bgroup "Day 6" [ bench "1" $ nfIO DaySix.problemOne    -- bench "example" $ whnf exampleBench 100000000
+                    -- , bench "2" $ nfIO DaySix.problemTwo
+                     ] 
+      ]
 
 -- | creates a list of length Int containing Int
 -- | A simpler way would be take i [i..]

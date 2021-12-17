@@ -1,6 +1,8 @@
 module DaySix.DaySix
 ( mainDaySix
 , testDaySix
+, problemOne
+, problemTwo
 ) where
 
 import Lib (getLines, parse)
@@ -92,3 +94,20 @@ fishies mp = Map.mapWithKey f mp
                 | k==6            = mp Map.! 0 + (mp Map.! 7)
                 | k==8            = mp Map.! 0
                 | otherwise       = error "Something went Wrong"
+
+
+{-
+    Bench problemOne
+    time                 507.3 μs   (493.1 μs .. 523.1 μs)
+                         0.991 R²   (0.985 R² .. 0.995 R²)
+    mean                 519.5 μs   (505.5 μs .. 543.0 μs)
+    std dev              57.55 μs   (38.65 μs .. 81.94 μs)
+    variance introduced by outliers: 80% (severely inflated)
+
+    Bench problemTwo
+    time                 702.2 μs   (693.6 μs .. 710.9 μs)
+                         0.998 R²   (0.997 R² .. 0.999 R²)
+    mean                 699.8 μs   (692.9 μs .. 709.2 μs)
+    std dev              27.84 μs   (21.38 μs .. 37.86 μs)
+    variance introduced by outliers: 32% (moderately inflated)
+-}

@@ -16,3 +16,7 @@ parse rule = Parsec.parse rule "(source)"
 -- | maps indexed
 mapIdx :: (a -> Int -> b) -> [a] -> [b]
 mapIdx f l = zipWith f l [0..]
+
+-- | parses a list like 1,2,3,4,5 to [1,2,3,4,5]
+commaListParser :: String -> IO (Either Parsec.ParseError [Int])
+commaListParser s = fmap (fmap read) . parse (Parsec.sepBy (Parsec.many Parsec.digit) (Parsec.char ',')) <$> readFile s

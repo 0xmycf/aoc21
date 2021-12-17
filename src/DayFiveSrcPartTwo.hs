@@ -85,7 +85,7 @@ sep = Parsec.spaces >> arrow >> Parsec.spaces
 mv2ToInt :: (Ord a, Enum a, Num a) => [LineB a] -> Map (V2 a) Int
 mv2ToInt = mapping Map.empty
     where
-        mapping acc []     = acc
+        mapping acc []        = acc
         mapping acc (LineB (V2 f1 f2) (V2 t1 t2) b a:xs)
             | Vertical   == b = mapping (folding acc [V2 a' b' | let a' = a  , b' <- sorting f2 t2]) xs
             | Horizontal == b = mapping (folding acc [V2 b' a' | let a' = a  , b' <- sorting f1 t1]) xs
