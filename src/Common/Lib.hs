@@ -1,5 +1,9 @@
+-- |
+-- | A module that holds common methods.
+-- |
+-----------------------------------
 {-# LANGUAGE FlexibleContexts #-}
-module Lib where
+module Common.Lib where
 
 import Data.Functor.Identity (Identity)
 import Text.Parsec (ParsecT)

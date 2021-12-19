@@ -3,8 +3,8 @@ module DayFour.DayFour
 , testDayFour
 ) where
 
-import Lib (getLines)
-import DayFourSrc (drawAndMark, getParsedBoards, getParsedIntList, drawAndMarkPart2, bToP, parsedBoards, inputBoards, pToList, parseNums)
+import Common.Lib (getLines)
+import Old.DayFourSrc (drawAndMark, getParsedBoards, getParsedIntList, drawAndMarkPart2, bToP, parsedBoards, inputBoards, pToList, parseNums)
 
 inputPath :: String
 inputPath = "./app/DayFour/input.txt"

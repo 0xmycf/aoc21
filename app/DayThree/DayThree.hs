@@ -3,8 +3,8 @@ module DayThree.DayThree
 , testDayThree
 ) where
 
-import Lib (getLines)
-import DayThreeSrc ( getGamma, getEpsilon, multGammaEps, getOxyOrCO2, hasMoreOrLess, getFirstChars )
+import Common.Lib (getLines)
+import Old.DayThreeSrc ( getGamma, getEpsilon, multGammaEps, getOxyOrCO2, hasMoreOrLess, getFirstChars )
 
 {-
     Input is 

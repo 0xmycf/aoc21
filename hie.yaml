@@ -15,9 +15,6 @@ cradle:
     - path: "app/DayOne/First/DayOneOne.hs"
       component: "AOC21:exe:AOC21-exe"
 
-    - path: "app/DaySix/DaySix.hs"
-      component: "AOC21:exe:AOC21-exe"
-
     - path: "app/DayThree/DayThree.hs"
       component: "AOC21:exe:AOC21-exe"
 

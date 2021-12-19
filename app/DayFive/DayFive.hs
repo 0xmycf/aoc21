@@ -4,10 +4,10 @@ module DayFive.DayFive
 , problemTwo
 ) where
 
-import DayFiveSrc (parse)
+import Old.DayFiveSrc (parse)
 
-import qualified DayFiveSrcPartTwo as DayFive
-import qualified Data.Map.Strict   as MapS
+import qualified Old.DayFiveSrcPartTwo as DayFive
+import qualified Data.Map.Strict       as MapS
 
 inputPath :: String
 inputPath = "./app/DayFive/input.txt"

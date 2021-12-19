@@ -1,4 +1,4 @@
-module DayThreeSrc where
+module Old.DayThreeSrc where
 import Data.List (partition)
 
 -- | Converts a binary string to a decimal integer

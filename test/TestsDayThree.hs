@@ -4,7 +4,7 @@ module TestsDayThree
 
 import Data.List (partition)
 import Control.Exception (assert)
-import DayThreeSrc (binToDec)
+import Old.DayThreeSrc (binToDec)
 
 sample :: [String]
 sample = [

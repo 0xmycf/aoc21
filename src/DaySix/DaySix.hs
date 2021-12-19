@@ -5,7 +5,7 @@ module DaySix.DaySix
 , problemTwo
 ) where
 
-import Lib (getLines, parse)
+import Common.Lib (getLines, parse)
 import Linear (V2(..))
 import Data.List (groupBy, group, sort)
 

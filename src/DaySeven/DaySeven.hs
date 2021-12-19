@@ -3,7 +3,7 @@ module DaySeven.DaySeven
 , testDaySeven
 ) where
 
-import Lib (getLines, parse, commaListParser)
+import Common.Lib (getLines, parse, commaListParser)
 import qualified Text.Parsec as Parsec
 import Data.List (sort)
 

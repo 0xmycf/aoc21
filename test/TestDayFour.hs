@@ -2,8 +2,8 @@ module TestDayFour
 ( testDayFourSuit
 ) where
 
-import Lib (getLines)
-import qualified DayFourSrc as DFS
+import Common.Lib (getLines)
+import qualified Old.DayFourSrc as DFS
     ( prepare,
       mkBoard,
       inputBoards,
@@ -16,7 +16,7 @@ import qualified DayFourSrc as DFS
 import qualified Data.Map as Map
 import qualified Data.Matrix as M
 import Data.Map (Map)
-import DayFourSrc (check, BoardNumber (marked, number), concentrate, bToP, parsedBoards, inputBoards, parseNums, pToList, prepare, mkBoard)
+import Old.DayFourSrc (check, BoardNumber (marked, number), concentrate, bToP, parsedBoards, inputBoards, parseNums, pToList, prepare, mkBoard)
 import Data.Map.Lazy ((!))
 import GHC.Base (IO(IO))
 
