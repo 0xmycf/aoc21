@@ -7,12 +7,16 @@ maintainer:          "mycf.mycf.mycf@gmail.com"
 copyright:           "2021 0xmycf"
 
 extra-source-files:
-- README.md
-- ChangeLog.md
+- README.md          
+
+data-dir:            template
+# data-files:
+# - template/DayX.tmp
 
 default-extensions:
   - TypeOperators
   - ExplicitNamespaces
+  - FlexibleContexts
 
 # Metadata used when publishing your package
 # synopsis:            Short description of your package
@@ -29,9 +33,12 @@ dependencies:
 - containers
 - parsec
 - linear
+- finitary
 
 library:
   source-dirs: src
+  dependencies:
+  - directory
 
 executables:
   AOC21-exe:

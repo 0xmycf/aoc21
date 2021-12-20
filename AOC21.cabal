@@ -16,7 +16,7 @@ license:        MIT
 build-type:     Simple
 extra-source-files:
     README.md
-    ChangeLog.md
+data-dir:       template
 
 source-repository head
   type: git
@@ -24,20 +24,29 @@ source-repository head
 
 library
   exposed-modules:
-      DayFiveSrc
-      DayFiveSrcPartTwo
-      DayFourSrc
+      Common.Days
+      Common.Lib
+      Common.Solution
+      DayEight.DayEight
       DaySeven.DaySeven
       DaySix.DaySix
-      DayThreeSrc
-      Lib
+      Old.DayFiveSrc
+      Old.DayFiveSrcPartTwo
+      Old.DayFourSrc
+      Old.DayThreeSrc
   other-modules:
       Paths_AOC21
   hs-source-dirs:
       src
+  default-extensions:
+      TypeOperators
+      ExplicitNamespaces
+      FlexibleContexts
   build-depends:
       base >=4.7 && <5
     , containers
+    , directory
+    , finitary
     , linear
     , matrix
     , parsec
@@ -57,12 +66,13 @@ executable AOC21-exe
   default-extensions:
       TypeOperators
       ExplicitNamespaces
+      FlexibleContexts
   ghc-options: -threaded -rtsopts -with-rtsopts=-N
   build-depends:
       AOC21
     , base >=4.7 && <5
     , containers
-    , directory
+    , finitary
     , linear
     , matrix
     , parsec
@@ -81,12 +91,13 @@ test-suite AOC21-test
   default-extensions:
       TypeOperators
       ExplicitNamespaces
+      FlexibleContexts
   ghc-options: -threaded -rtsopts -with-rtsopts=-N
   build-depends:
       AOC21
     , base >=4.7 && <5
     , containers
-    , directory
+    , finitary
     , linear
     , matrix
     , parsec
@@ -102,12 +113,14 @@ benchmark AOC21-bench
   default-extensions:
       TypeOperators
       ExplicitNamespaces
+      FlexibleContexts
   ghc-options: -O2
   build-depends:
       AOC21
     , base >=4.7 && <5
     , containers
     , criterion
+    , finitary
     , linear
     , matrix
     , parsec

@@ -31,4 +31,4 @@ problemTwo = commaListParser inputPath >>= print . fmap (foldr (\x acc -> abs(su
 -- then it yields the numbers 1+2+3... etc until the destination is reached.
 -- The sum of this list is the amount of fuel needed.
 -- I did this problem in ghci and don't want to make my solution 
--- uglier than it needs to be so I skip the part where I get the 331 out of the List.
+-- uglier than it needs to be so I skip the part where I get the 479 out of the List.

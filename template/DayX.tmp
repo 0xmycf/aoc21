@@ -1,0 +1,28 @@
+module DayX.DayX
+( mainDayX
+, testDayX
+) where
+
+import Lib (getLines, parse)
+import qualified Text.Parsec as Parsec
+
+inputPath :: String
+inputPath = "./inputs/DayX.txt"
+
+testPath :: String
+testPath  = "./inputs/test/DayX.txt"
+
+mainDayX :: IO ()
+mainDayX = putStrLn "Day X..." >> problemOne >> problemTwo >> putStrLn "Day X over.\n "
+
+testDayX :: IO ()
+testDayX = do
+    putStrLn "Test Day X..."
+    putStrLn "Test Day X over.\n"
+
+
+problemOne :: IO ()
+problemOne = print "to be impl"
+
+problemTwo :: IO ()
+problemTwo = print "to be impl"
