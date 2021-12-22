@@ -10,9 +10,10 @@ import DayFour.DayFour          ( mainDayFour , testDayFour )
 import DayFive.DayFive          ( mainDayFive , testDayFive )
 import DaySix.DaySix            ( mainDaySix  , testDaySix  )
 import DaySeven.DaySeven        ( mainDaySeven, testDaySeven)
+import DayEight.DayEight        ( mainDayEight, testDayEight)
+import DayNine.DayNine          ( mainDayNine , testDayNine )
 
 import qualified Common.Days as Days
-import DayEight.DayEight (mainDayEight, testDayEight)
 
 main :: IO ()
 main = do
@@ -37,7 +38,9 @@ main = do
       "7t"      -> testDaySeven  
       "8"       -> mainDayEight     -- main 8
       "8t"      -> testDayEight   
+      "9"       -> mainDayNine     -- main 9
+      "9t"      -> testDayNine   
       "bm"      -> print   "Please use 'stack bench' for that!"
       "new"     -> let bl = putStrLn "Are you sure you want to create a new day? (True/False)" *> (fromMaybe False . readMaybe <$> getLine) in 
                             bl >>= (\x -> if x then Days.initDay else putStrLn "" *> main)
-      _         -> error $ "Please enter test or run or num(t). Available Nums are: " ++ show [1..6]
+      _         -> error $ "Please enter test or run or num(t). Available Nums are: " ++ show [1..9]

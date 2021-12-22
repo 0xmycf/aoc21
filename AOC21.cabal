@@ -26,8 +26,8 @@ library
   exposed-modules:
       Common.Days
       Common.Lib
-      Common.Solution
       DayEight.DayEight
+      DayNine.DayNine
       DaySeven.DaySeven
       DaySix.DaySix
       Old.DayFiveSrc

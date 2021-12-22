@@ -3,22 +3,22 @@ module DayEight.DayEight
 , testDayEight
 ) where
 
-import Common.Lib (getLines, parse, maskChar, mapIdx)
-import Data.Functor.Identity (Identity)
-import Data.Sequence (sortOn)
-import Data.Foldable (toList, Foldable (foldl'), traverse_)
+import           Common.Lib            (getLines, mapIdx, maskChar, parse)
+import           Data.Foldable         (Foldable (foldl'), toList, traverse_)
+import           Data.Functor.Identity (Identity)
+import           Data.Sequence         (sortOn)
 
-import Text.Parsec ((<|>))
-import qualified Text.Parsec   as Parsec
+import           Text.Parsec           ((<|>))
+import qualified Text.Parsec           as Parsec
 
-import Data.Map (Map)
-import qualified Data.Map      as Map
+import           Data.Map              (Map)
+import qualified Data.Map              as Map
 
-import qualified Data.Sequence as Seq
-import Data.List (groupBy)
+import           Data.List             (groupBy)
+import qualified Data.Sequence         as Seq
 
-import qualified Data.Set      as Set
-import Data.Set (Set)
+import           Data.Set              (Set)
+import qualified Data.Set              as Set
 
 inputPath :: String
 inputPath = "./inputs/DayEight.txt"
@@ -89,7 +89,7 @@ problemTwo = do
             -- | another horrible function
             arrange [a,b,c,s,l,e] = [a,b,c,e,l,s]
             arrange             _ = error "this should never occur"
-            -- | I still don't know how to tell the compiler what read I want to use 
+            -- | I still don't know how to tell the compiler what read I want to use
             toInt :: String -> Int
             toInt = read
 
@@ -149,7 +149,7 @@ decrypt xs = snd . foldl' decodedToMap (Map.empty, Map.empty) $ xs
             | length a == 4 = (Map.insert 4 a inv, Map.insert (foldr (flip maskChar) 0 a) 4 mp)
             | length a == 7 = (Map.insert 8 a inv, Map.insert (foldr (flip maskChar) 0 a) 8 mp)
         decodedToMap (inv, mp) [a, b, c]
-            | length a == 5 = -- shorts 
+            | length a == 5 = -- shorts
                 let sh  = Set.fromList [a, b, c]
                     one = Set.fromList ((xs !! 0) !! 0) -- => one MUST be on the left hand side, otherwise it wont work!
                     nine= Set.fromList (inv Map.! 9)
@@ -224,8 +224,8 @@ fromList "f"
 for shorts:
 
 if all of ONE are in x then x = 3
-if y without 9 is empty 
-    then y is 5; x = 3, v = 2 
+if y without 9 is empty
+    then y is 5; x = 3, v = 2
 
     else y is 2; x = 3, v = 5
 -}

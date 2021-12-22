@@ -3,7 +3,7 @@ module DayX.DayX
 , testDayX
 ) where
 
-import Lib (getLines, parse)
+import Common.Lib (getLines, parse)
 import qualified Text.Parsec as Parsec
 
 inputPath :: String
