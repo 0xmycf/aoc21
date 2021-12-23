@@ -1,3 +1,5 @@
+{-# OPTIONS_GHC -Wno-type-defaults #-}
+{-# OPTIONS_GHC -Wno-name-shadowing #-}
 module DayTwo.First.DayTwoFirst 
 ( mainDayTwo
 , testDayTwo

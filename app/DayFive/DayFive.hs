@@ -1,3 +1,4 @@
+{-# OPTIONS_GHC -Wno-unused-top-binds #-}
 module DayFive.DayFive
 ( mainDayFive
 , testDayFive

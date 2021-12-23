@@ -2,15 +2,19 @@
 -- | A module that holds common methods.
 -- |
 -----------------------------------
-{-# LANGUAGE FlexibleContexts #-}
 module Common.Lib where
 
 import Data.Functor.Identity (Identity)
-import Text.Parsec (ParsecT)
-
-import qualified Text.Parsec as Parsec
+import Data.Foldable (toList)
 import Data.Char (ord)
 import Data.Bits (Bits(shiftL, (.|.)))
+
+import Data.Map (Map)
+
+import qualified Text.Parsec as Parsec
+import qualified Data.Map    as Map
+import Data.List (sort, group)
+
 
 getLines :: FilePath -> IO [String]
 getLines = fmap lines . readFile

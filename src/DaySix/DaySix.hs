@@ -1,3 +1,4 @@
+{-# OPTIONS_GHC -Wno-type-defaults #-}
 module DaySix.DaySix
 ( mainDaySix
 , testDaySix
@@ -5,9 +6,9 @@ module DaySix.DaySix
 , problemTwo
 ) where
 
-import Common.Lib (getLines, parse)
+import Common.Lib (parse)
 import Linear (V2(..))
-import Data.List (groupBy, group, sort)
+import Data.List (group, sort)
 
 import qualified Data.Map    as Map
 import qualified Text.Parsec as Parsec
@@ -57,10 +58,10 @@ inputParser s = fmap (fmap read) . parse (Parsec.sepBy (Parsec.many Parsec.digit
 interpretInput :: [Int] -> Map Int Fish
 interpretInput inp = let mp  = Map.fromList ([0..8] `zip` repeat (V2 0 0))
                          srt = map (fmap (\x -> V2 (length x) 0)) . zipWith (\_ a -> (head a, a)) [0..] . group . sort $ inp in
-                              Map.mapWithKey (\k a -> foldl (\c (a',b') -> if k == a' then b' else c) (V2 0 0) srt) mp
+                              Map.mapWithKey (\k _ -> foldl (\c (a',b') -> if k == a' then b' else c) (V2 0 0) srt) mp
 
 {-
-    Before I started I really started I researched some papers about models for individual based exponential population growth.
+    Before I started I researched some papers about models for individual based exponential population growth.
     I found this paper, so my solution is based on it: https://arxiv.org/pdf/2005.03974.pdf (by Luis R. T. Neves, Leonardo Paulo Maia)
 
     The basic idea is to have a List of size n, where n is the max value of replication cycles.
@@ -90,7 +91,7 @@ type Fish = V2 Int
 fishies :: Map Int Fish -> Map Int Fish
 fishies mp = Map.mapWithKey f mp
     where
-        f k fs  | k/=8 && k/=6    = mp Map.! (k+1)
+        f k _   | k/=8 && k/=6    = mp Map.! (k+1)
                 | k==6            = mp Map.! 0 + (mp Map.! 7)
                 | k==8            = mp Map.! 0
                 | otherwise       = error "Something went Wrong"

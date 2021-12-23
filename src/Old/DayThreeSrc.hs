@@ -1,3 +1,4 @@
+{-# OPTIONS_GHC -Wno-name-shadowing #-}
 module Old.DayThreeSrc where
 import Data.List (partition)
 
@@ -13,8 +14,8 @@ import Data.List (partition)
 binToDec :: String -> Int
 binToDec xs = go 0 (reverse xs)
     where
-        go _ []     = 0
-        go i (x:xs) = (2^i * read [x]) + go (i+1) xs
+        go _ []      = 0
+        go i (x:xs') = (2^i * read [x]) + go (i+1) xs'
 {-
     This explains why we use the reverse at the beginning.
 

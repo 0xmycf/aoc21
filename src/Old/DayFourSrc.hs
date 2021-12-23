@@ -1,4 +1,6 @@
-module Old.DayFourSrc 
+{-# OPTIONS_GHC -Wno-name-shadowing #-}
+{-# OPTIONS_GHC -Wno-unused-top-binds #-}
+module Old.DayFourSrc
 (prepare,
   mkBoard,
   inputBoards,
@@ -18,14 +20,12 @@ module Old.DayFourSrc
   concentrate
 ) where
 
-import Data.Matrix (Matrix)
-import Data.Map (Map, (!))
-import Data.Bits ((.|.), Bits (shiftL, (.&.)))
-import Data.Semigroup (sconcat)
-import Data.List (foldl')
+import           Data.Bits   (Bits (shiftL, (.&.)), (.|.))
+import           Data.Map    (Map, (!))
+import           Data.Matrix (Matrix)
 
-import qualified Data.Matrix as M
 import qualified Data.Map    as Map
+import qualified Data.Matrix as M
 {-
   General Idea for Problem One
   1. Parse input and construct the following
@@ -74,10 +74,10 @@ instance Show BoardNumber where
 
 -- | This allows for quick concentration of the game points.
 instance Semigroup BoardNumber where
-   (Bn a1 True)  <> (Bn b1 True)   = Bn 0 False
-   (Bn a1 True)  <> (Bn b1 False)  = Bn b1 False
-   (Bn a1 False) <> (Bn b1 True)   = Bn a1 False
-   (Bn a1 False) <> (Bn b1 False)  = Bn (a1 + b1) False
+   (Bn _  True)  <> (Bn _  True)  = Bn 0 False
+   (Bn _  True)  <> (Bn b1 False) = Bn b1 False
+   (Bn a1 False) <> (Bn _  True)  = Bn a1 False
+   (Bn a1 False) <> (Bn b1 False) = Bn (a1 + b1) False
 
 concentrate :: Matrix BoardNumber -> Int
 concentrate xs = number (foldl (<>) (Bn 0 True) . M.toList $ xs)
@@ -110,7 +110,7 @@ inputBoards = filter (/="") . dropWhile (',' `elem`) -- (\l -> length l /= 14)
     5. return that list.
 -}
 
--- | Should return a list of the different boards 
+-- | Should return a list of the different boards
 -- | BEFORE those are turned into actual Boards.
 parsedBoards :: [String] -> [[Int]]
 parsedBoards xs = map (prepare . map words) . group5 [] $ xs
@@ -142,7 +142,7 @@ getParsedBoards :: [String] -> [Board BoardNumber]
 getParsedBoards = map mkBoard . getParsedIntListBoard
 
 -- | maps the unparsed boards to a dictionary
--- | { Bitmask => Board BoardNumber } 
+-- | { Bitmask => Board BoardNumber }
 -- | It is important that the keys are Integers instead if Int's, otherwise we get arithmetic overflow errors!
 bToP :: [[Int]] -> Map Integer (Board BoardNumber)
 bToP xs = Map.fromList $ prepIntMap xs
@@ -165,12 +165,12 @@ check n mask = 1 `shiftL` (n - 1) .&. mask == 1 `shiftL` (n - 1)
 
 -- I wonder if there is a way to write this less confusing...
 -- | Takes in the Boards as well as the RNG Num List, returns a Win
-drawAndMark :: Map Integer (Board BoardNumber) -> [Int] -> Game 
+drawAndMark :: Map Integer (Board BoardNumber) -> [Int] -> Game
 drawAndMark ms = mark (Queue ms)
   where
     mark :: Game -> [Int] -> Game
     mark g []             = if isQueue g then error "No winner!" else g
-    mark (Win a) x        = Win a
+    mark (Win a) _        = Win a
     mark (Queue m) (x:xs) = do
         mark (Map.foldrWithKey (\ k _ g -> do
             case g of
@@ -226,12 +226,12 @@ notifyPart2 i k ms = bMark (ms ! k)
               else Win (i * concentrate mx)
 
 -- | I wanted to add Notify as a Parameter, but it would have been too long, so I just made a new Function.
-drawAndMarkPart2 :: Map Integer (Board BoardNumber) -> [Int] -> Game 
+drawAndMarkPart2 :: Map Integer (Board BoardNumber) -> [Int] -> Game
 drawAndMarkPart2 ms = mark (Queue ms)
   where
     mark :: Game -> [Int] -> Game
     mark g []             = if isQueue g then error "No winner!" else g
-    mark (Win a) x        = Win a
+    mark (Win a) _        = Win a
     mark (Queue m) (x:xs) = do
         mark (Map.foldrWithKey (\ k _ g -> do
             case g of

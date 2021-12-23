@@ -1,3 +1,4 @@
+{-# OPTIONS_GHC -Wno-type-defaults #-}
 module Main where
   
 import Text.Read   (readMaybe)

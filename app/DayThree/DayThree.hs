@@ -5,6 +5,7 @@ module DayThree.DayThree
 
 import Common.Lib (getLines)
 import Old.DayThreeSrc ( getGamma, getEpsilon, multGammaEps, getOxyOrCO2, hasMoreOrLess, getFirstChars )
+import Prelude hiding (lines)
 
 {-
     Input is 

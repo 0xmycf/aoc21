@@ -11,6 +11,13 @@ packages:
       sha256: 38e03206b355db7a6a2f3ad73039b18b15245141b6974080b7d9a99e82ddf76a
   original:
     hackage: finitary-2.1.1.0@sha256:f0f19aace424e5fdb5543fbcfb9446e50c8cb349fe7564642c5c25dbe3418076,2743
+- completed:
+    hackage: finite-1.4.1.2@sha256:9e41353b5ab053b5c937c13ec2ded6dcddb70e1f29204be4dd6bf683bb2b47c7,1931
+    pantry-tree:
+      size: 594
+      sha256: 968f07afaa32f02571b841661b53baa21b037f2a38ff57b87524ecb0b062a0db
+  original:
+    hackage: finite-1.4.1.2@sha256:9e41353b5ab053b5c937c13ec2ded6dcddb70e1f29204be4dd6bf683bb2b47c7,1931
 snapshots:
 - completed:
     size: 586296

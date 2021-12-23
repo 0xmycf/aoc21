@@ -4,7 +4,8 @@ module DayFour.DayFour
 ) where
 
 import Common.Lib (getLines)
-import Old.DayFourSrc (drawAndMark, getParsedBoards, getParsedIntList, drawAndMarkPart2, bToP, parsedBoards, inputBoards, pToList, parseNums)
+import Old.DayFourSrc (drawAndMark, drawAndMarkPart2, bToP, parsedBoards, inputBoards, pToList, parseNums)
+import Prelude hiding (lines)
 
 inputPath :: String
 inputPath = "./app/DayFour/input.txt"

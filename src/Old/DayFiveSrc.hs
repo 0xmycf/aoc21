@@ -1,11 +1,13 @@
 {-# LANGUAGE FlexibleContexts #-}
+{-# OPTIONS_GHC -Wno-unused-top-binds #-}
+{-# OPTIONS_GHC -Wno-unused-do-bind #-}
+{-# OPTIONS_GHC -Wno-name-shadowing #-}
 module Old.DayFiveSrc
 ( parse
 ) where
 
 import Data.Functor.Identity (Identity)
 import Text.Parsec (ParsecT)
-import Data.List (sort)
 
 import qualified Text.Parsec as Parsec
 import qualified Data.Set    as Set

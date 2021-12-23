@@ -1,4 +1,6 @@
 {-# LANGUAGE FlexibleContexts #-}
+{-# OPTIONS_GHC -Wno-unused-do-bind #-}
+{-# OPTIONS_GHC -Wno-unused-top-binds #-}
 module Old.DayFiveSrcPartTwo 
 ( mv2ToInt
 , getVertAndHoriz
@@ -43,7 +45,7 @@ data LineB a = LineB {
   }
 
 instance (Show a) => Show (LineB a) where
-  show (LineB (V2 f1 f2) (V2 t1 t2) d _) = show f1 ++ "," ++ show f2 ++ " -> " ++ show t1 ++ "," ++ show t2
+  show (LineB (V2 f1 f2) (V2 t1 t2) _ _) = show f1 ++ "," ++ show f2 ++ " -> " ++ show t1 ++ "," ++ show t2
 
 -- | Parses one input Line, where one Line looks like:
 -- | a,b -> c,d
@@ -93,7 +95,7 @@ mv2ToInt = mapping Map.empty
             | Down       == b = mapping (folding acc [V2 a' b' | a' <- sorting f1 t1, b' <- sorting f2 t2, a' - b' == f1 - f2]) xs
             | otherwise       = error "Error while creating the map"
             where
-                folding acc' xs = foldr (\c p -> Map.insertWith (+) c 1 p) acc' xs
+                folding acc' xs' = foldr (\c p -> Map.insertWith (+) c 1 p) acc' xs'
 
 -- | takes in two numbers and constructs a list out if them.
 sorting :: (Ord a, Enum a) => a -> a -> [a]

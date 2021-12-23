@@ -1,14 +1,16 @@
+{-# OPTIONS_GHC -Wno-type-defaults #-}
+{-# OPTIONS_GHC -Wno-unused-top-binds #-}
+{-# OPTIONS_GHC -Wno-name-shadowing #-}
 module DayEight.DayEight
 ( mainDayEight
 , testDayEight
 ) where
 
 import           Common.Lib            (getLines, mapIdx, maskChar, parse)
-import           Data.Foldable         (Foldable (foldl'), toList, traverse_)
+import           Data.Foldable         (Foldable (foldl'), toList)
 import           Data.Functor.Identity (Identity)
 import           Data.Sequence         (sortOn)
 
-import           Text.Parsec           ((<|>))
 import qualified Text.Parsec           as Parsec
 
 import           Data.Map              (Map)
@@ -37,7 +39,6 @@ testDayEight = do
       Left  pe -> print pe
       Right x  -> do
             let first  = fmap (arrange . filter (/=[]) . fmap (filter (/="")) . groupBy (\a b -> length a == length b) . toList . sortOn length . Seq.fromList . fst) x
-                second = fmap snd x
             print first
             print $ fmap (fmap (fmap (foldr (flip maskChar) 0))) first
             print $ fmap decrypt first
@@ -47,15 +48,6 @@ testDayEight = do
             arrange             _ = error "this should never occur"
     putStrLn "Test Day Eight over.\n"
 
-
-decryption :: Map Char Char
-decryption = let panels = ['a'..'g'] in Map.fromList (panels `zip` panels)
-
-outputs :: IO [String]
-outputs = fmap (fmap (drop 2 . dropWhile (/= '|'))) . getLines $ inputPath
-
-inputs :: IO [String]
-inputs = fmap (fmap (takeWhile (/= '|'))) . getLines $ inputPath
 
 problemOne :: IO ()
 problemOne = do
@@ -182,7 +174,7 @@ decrypt xs = snd . foldl' decodedToMap (Map.empty, Map.empty) $ xs
                             let (inv,mp) = acc in
                             if not . all (`elem` a') $ one
                             then let diff = Set.difference ls (Set.fromList [a'])
-                                in foldl (\acc v ->
+                                in foldl (\_ v ->
                                     if all (`elem` Set.fromList four) (Set.difference (Set.fromList a') (Set.fromList v))
                                     then do
                                         let t = (Map.insert 6 a' inv, Map.insert (foldr (flip maskChar) 0 a') 6 mp)
@@ -198,7 +190,7 @@ decrypt xs = snd . foldl' decodedToMap (Map.empty, Map.empty) $ xs
                             else acc
                     in let (resl, resr) = foldl longs (Map.empty, Map.empty) [a, b, c]
                     in (inv `Map.union` resl, mp `Map.union` resr)
-        decodedToMap (inv, mp) xs' = error "Should never occur"
+        decodedToMap _ _ = error "Should never occur"
 
 {-
 My reasoning in ghci
