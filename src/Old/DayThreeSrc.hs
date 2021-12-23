@@ -12,7 +12,7 @@ import Data.List (partition)
 -- | Figured the correct syntax with a bit of help from here:
 -- | https://stackoverflow.com/questions/44217310/convert-binary-string-to-integer-value-using-first-order-functions
 binToDec :: String -> Int
-binToDec xs = go 0 (reverse xs)
+binToDec xs = go (0 :: Integer) (reverse xs)
     where
         go _ []      = 0
         go i (x:xs') = (2^i * read [x]) + go (i+1) xs'
