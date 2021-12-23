@@ -4,16 +4,16 @@
 -----------------------------------
 module Common.Lib where
 
-import Data.Functor.Identity (Identity)
-import Data.Foldable (toList)
-import Data.Char (ord)
-import Data.Bits (Bits(shiftL, (.|.)))
+import           Data.Bits             (Bits (shiftL, (.|.)))
+import           Data.Char             (ord)
+import           Data.Foldable         (toList)
+import           Data.Functor.Identity (Identity)
 
-import Data.Map (Map)
+import           Data.Map              (Map)
 
-import qualified Text.Parsec as Parsec
-import qualified Data.Map    as Map
-import Data.List (sort, group)
+import           Data.List             (group, sort)
+import qualified Data.Map              as Map
+import qualified Text.Parsec           as Parsec
 
 
 getLines :: FilePath -> IO [String]
@@ -35,3 +35,7 @@ commaListParser s = fmap (fmap read) . parse (Parsec.sepBy (Parsec.many Parsec.d
 -- | ord 'a' = 97
 maskChar :: Integer -> Char -> Integer
 maskChar acc c = acc .|. 1 `shiftL` (ord c - 97)
+
+-- | Frequency Map
+frequencyMap :: (Foldable f, Ord a) => f a -> Map a Int
+frequencyMap = Map.fromListWith (+) . map (\x -> (head x, length x)) . group . sort . toList
