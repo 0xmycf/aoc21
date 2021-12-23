@@ -32,6 +32,7 @@ description:         Please see the README on GitHub at <https://github.com/0xmy
 
 dependencies:
 - base >= 4.7 && < 5
+- advent-of-code-api
 - matrix
 - containers
 - parsec
@@ -39,11 +40,9 @@ dependencies:
 - finitary
 - finite
 - vector
+- text
 
 ghc-options:
-- -threaded
-- -rtsopts
-- -with-rtsopts=-N
 - -Wall
 
 library:

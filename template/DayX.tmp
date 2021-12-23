@@ -7,7 +7,7 @@ import           Common.Lib  (getLines, parse)
 import qualified Text.Parsec as Parsec
 
 inputPath :: FilePath
-inputPath = "./inputs/DayX.txt"
+inputPath = "./inputs/auto/input/2021/DayX.txt"
 
 testPath :: FilePath
 testPath  = "./inputs/test/DayX.txt"

@@ -45,9 +45,10 @@ library
       LambdaCase
       TupleSections
       BlockArguments
-  ghc-options: -threaded -rtsopts -with-rtsopts=-N -Wall
+  ghc-options: -Wall
   build-depends:
-      base >=4.7 && <5
+      advent-of-code-api
+    , base >=4.7 && <5
     , containers
     , directory
     , finitary
@@ -55,6 +56,7 @@ library
     , linear
     , matrix
     , parsec
+    , text
     , vector
   default-language: Haskell2010
 
@@ -76,9 +78,10 @@ executable AOC21-exe
       LambdaCase
       TupleSections
       BlockArguments
-  ghc-options: -threaded -rtsopts -with-rtsopts=-N -Wall -threaded -rtsopts -with-rtsopts=-N
+  ghc-options: -Wall -threaded -rtsopts -with-rtsopts=-N
   build-depends:
       AOC21
+    , advent-of-code-api
     , base >=4.7 && <5
     , containers
     , finitary
@@ -86,6 +89,7 @@ executable AOC21-exe
     , linear
     , matrix
     , parsec
+    , text
     , vector
   default-language: Haskell2010
 
@@ -106,10 +110,11 @@ test-suite AOC21-test
       LambdaCase
       TupleSections
       BlockArguments
-  ghc-options: -threaded -rtsopts -with-rtsopts=-N -Wall -threaded -rtsopts -with-rtsopts=-N
+  ghc-options: -Wall -threaded -rtsopts -with-rtsopts=-N
   build-depends:
       AOC21
     , QuickCheck
+    , advent-of-code-api
     , base >=4.7 && <5
     , containers
     , finitary
@@ -117,6 +122,7 @@ test-suite AOC21-test
     , linear
     , matrix
     , parsec
+    , text
     , vector
   default-language: Haskell2010
 
@@ -134,9 +140,10 @@ benchmark AOC21-bench
       LambdaCase
       TupleSections
       BlockArguments
-  ghc-options: -threaded -rtsopts -with-rtsopts=-N -Wall -O2
+  ghc-options: -Wall -O2
   build-depends:
       AOC21
+    , advent-of-code-api
     , base >=4.7 && <5
     , containers
     , criterion
@@ -145,5 +152,6 @@ benchmark AOC21-bench
     , linear
     , matrix
     , parsec
+    , text
     , vector
   default-language: Haskell2010
