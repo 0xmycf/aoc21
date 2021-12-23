@@ -85,7 +85,7 @@ problemTwo = do
             toInt :: String -> Int
             toInt = read
 
--- | None of the following 2 definitions is used, but it looks cool, so it stays
+-- | None of the following 2 definitions are used, but it looks cool, so it stays
 data Panel
     = Top       -- top row
     | Middle    -- middle row
