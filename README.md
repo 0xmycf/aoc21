@@ -16,3 +16,6 @@ I will also add a small reflection about each day.
     In there I'll talk about what I learned, how easy it was for me, my way of thinking.  
 
 Benchmarks will follow too after I've build a proper (more or less) bench suit.
+
+# AoC API
+Downloading the prompts, inputs and submitting my results is powered by the [advent of code api](https://hackage.haskell.org/package/advent-of-code-api-0.2.8.1)!

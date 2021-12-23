@@ -30,6 +30,7 @@ library
       DayNine.DayNine
       DaySeven.DaySeven
       DaySix.DaySix
+      DayTen.DayTen
       Old.DayFiveSrc
       Old.DayFiveSrcPartTwo
       Old.DayFourSrc

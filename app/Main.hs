@@ -14,18 +14,18 @@ import           DaySix.DaySix            (mainDaySix, testDaySix)
 import           DayThree.DayThree        (mainDayThree, testDayThree)
 import           DayTwo.First.DayTwoFirst (mainDayTwo, testDayTwo)
 
-import           Common.Days              (getInput, getPrompt)
+import           Common.Days              (inputBlock, promptBlock, submitBlock)
 import qualified Common.Days              as Days
-import           System.Exit              (exitFailure)
-import Control.Monad ((>=>))
+import System.Exit (exitSuccess)
+import Advent (Part(Part1))
 
 main :: IO ()
 main = do
-    putStrLn "test/run/{day}/{day}t/prompt/input/bm/new"
+    putStrLn "test/run/{day}/{day}t/prompt/input/bm/new/dl/submit/exit"
     input <- getLine
     case input of
-      "test"    -> testDayOne >> testDayTwo >> testDayThree >> testDayFour >> testDayFive >> testDaySix >> testDaySeven >> testDayEight >> testDayNine 
-      "run"     -> mainDayOne >> mainDayTwo >> mainDayThree >> mainDayFour >> mainDayFive >> testDaySix >> mainDaySeven >> mainDayEight >> mainDayNine 
+      "test"    -> testDayOne >> testDayTwo >> testDayThree >> testDayFour >> testDayFive >> testDaySix >> testDaySeven >> testDayEight >> testDayNine
+      "run"     -> mainDayOne >> mainDayTwo >> mainDayThree >> mainDayFour >> mainDayFive >> testDaySix >> mainDaySeven >> mainDayEight >> mainDayNine
       "1"       -> mainDayOne       -- main 1
       "1t"      -> testDayOne
       "2"       -> mainDayTwo       -- main 2
@@ -44,15 +44,18 @@ main = do
       "8t"      -> testDayEight
       "9"       -> mainDayNine      -- main 9
       "9t"      -> testDayNine
-      "prompt"  -> let day = print "Please enter a Day Number" *> (fromMaybe 1 . readMaybe <$> getLine) in
-                            day >>= (getPrompt >=> \case
-                                      Left ace  -> print ace *> exitFailure 
-                                      Right _   -> print "The input has been downloaded to cache/prompt/2021/")
-      "input"   -> let day = print "Please enter a Day Number" *> (fromMaybe 1 . readMaybe <$> getLine) in
-                            day >>= (getInput >=> \case
-                                      Left ace  -> print ace *> exitFailure 
-                                      Right _   -> print "The input has been downloaded to inputs/auto/input/2021/")
+      "prompt"  -> let day = print "Please enter a Day Number" *> (fromMaybe 1 . readMaybe <$> getLine) in promptBlock day
+      "input"   -> let day = print "Please enter a Day Number" *> (fromMaybe 1 . readMaybe <$> getLine) in inputBlock day
+      "submit"  -> let day = print "Please enter a Day Number" *> (fromMaybe 1 . readMaybe <$> getLine)
+                       part= print "Please enter Part (Part1 | Part2)" *> (fromMaybe Part1 . readMaybe <$> getLine)
+                       answer = print "Please enter your answer to " *> getLine in
+                         submitBlock day part answer
+      "dl"      -> let day = print "Please enter a Day Number" *> (fromMaybe 1 . readMaybe <$> getLine) in promptBlock day >> inputBlock day
       "bm"      -> print "Please use 'stack bench' for that!"
-      "new"     -> let bl = putStrLn "Are you sure you want to create a new day? (True/False)" *> (fromMaybe False . readMaybe <$> getLine) in
+      "new"     -> let bl = putStrLn "Are you sure you want to create a new day? (True/False)" *> (fromMaybe False . readMaybe <$> getLine) in do
                             bl >>= (\x -> if x then Days.initDay else putStrLn "" *> main)
-      _         -> error $ "Please enter test or run or num(t). Available Nums are: " ++ show [1..9]
+      "e"       -> exitSuccess    
+      "exit"    -> exitSuccess
+      "q"       -> exitSuccess
+      "quit"    -> exitSuccess
+      _         -> print ("Please enter test or run or num(t). Available Nums are: " ++ show [1..10]) *> main
