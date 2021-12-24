@@ -5,6 +5,8 @@ module DayTen.DayTen
 ) where
 
 import           Common.Lib (getLines)
+import           Data.List  (sort)
+import           Prelude    hiding (last)
 
 inputPath :: FilePath
 inputPath = "./inputs/auto/input/2021/DayTen.txt"
@@ -34,7 +36,7 @@ problemOne :: IO ()
 problemOne = input inputPath >>= print . sum . fmap scoreCorrupted
 
 problemTwo :: IO ()
-problemTwo = print "to be impl"
+problemTwo = input inputPath >>= print . (\xs -> xs !! ((length xs - 1) `div` 2)) .  sort . filter (/=Just 0) . fmap (fmap scoringMissing <$> scoreMissing) . filter (not . filterCorrupted)
 
 scoring :: Char -> Int
 scoring ')' = 3
@@ -43,6 +45,14 @@ scoring '}' = 1197
 scoring '>' = 25137
 scoring  c  = error $ "This should never occur - scoring; char is: " ++ [c]
 
+scoringMissing :: String -> Int
+scoringMissing = foldl (\acc a -> acc * 5 + det a) 0
+    where
+    det ')' = 1
+    det ']' = 2
+    det '}' = 3
+    det '>' = 4
+
 close :: Char -> Char
 close '<' = '>'
 close '(' = ')'
@@ -50,8 +60,7 @@ close '{' = '}'
 close '[' = ']'
 close  _  =  error "This should never occur - close"
 
-closed, opened :: [Char]
-closed = ">)}]"
+opened :: [Char]
 opened = "<({["
 
 scoreCorrupted :: String -> Int
@@ -65,6 +74,25 @@ scoreCorrupted (s:tr) = go [close s] tr
         | x == p          = go dng xs
         | x /= p          = scoring x
 
+scoreMissing :: String -> Maybe String
+scoreMissing []     = Nothing
+scoreMissing (s:tr) = go [close s] [] tr
+    where
+    go p l [] = pure $ l ++ p
+    go [] l _ = pure   l
+    go pending@(p:dng) last (x:xs)
+        | x `elem` opened = go (close x : pending) last xs
+        | x == p          = go dng last xs
+        | x /= p          = go dng (p : last) xs
 
-
-
+-- | returns true if the string is corrupted, false otherwise
+filterCorrupted :: String -> Bool
+filterCorrupted []     = False
+filterCorrupted (s:tr) = go [close s] tr
+    where
+    go _ [] = False
+    go [] _ = False
+    go pending@(p:dng) (x:xs)
+        | x `elem` opened = go (close x : pending) xs
+        | x == p          = go dng xs
+        | x /= p          = True
