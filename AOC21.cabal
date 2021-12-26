@@ -27,6 +27,7 @@ library
       Common.Days
       Common.Lib
       DayEight.DayEight
+      DayEleven.DayEleven
       DayNine.DayNine
       DaySeven.DaySeven
       DaySix.DaySix

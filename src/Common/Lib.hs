@@ -13,6 +13,7 @@ import           Data.Map              (Map)
 
 import           Data.List             (group, sort)
 import qualified Data.Map              as Map
+import           Linear                (V2 (V2))
 import qualified Text.Parsec           as Parsec
 
 
@@ -44,7 +45,7 @@ frequencyMap = Map.fromListWith (+) . map (\x -> (head x, length x)) . group . s
 -- | Example: 10101
 -- | 2^0 * 1 + 2^1 * 0 + 2^2 * 1 + 2^3 * 0 + 2^4 * 1 = 1 + 4 + 16 = 21
 -- | sum_{i=0}{j-1}(2^i * x)
--- |  where 
+-- |  where
 -- |   j is the length bitstring
 -- |   x is the ith digit of the bitstring
 -- | Figured the correct syntax with a bit of help from here:
@@ -54,3 +55,11 @@ binToDec xs = go (0 :: Integer) (reverse xs)
     where
         go _ []      = 0
         go i (x:xs') = (2^i * read [x]) + go (i+1) xs'
+
+-- | gets parallel (to x/y axis) perpendicular vectors to hte input Coordinate
+getNeighbors :: V2  Int -> [V2  Int]
+getNeighbors (V2 a b) = [V2 a (b-1), V2 (a+1) b, V2 a (b+1), V2 (a-1) b]
+
+-- | gets neighbors parallel to x/y axis as well as the vectors in 45 degree angle relative to those.
+getAllNeighbs :: V2  Int -> [V2  Int]
+getAllNeighbs (V2 a b) = [V2 a (b-1), V2 (a-1) (b-1) , V2 (a+1) b, V2 (a+1) (b+1), V2 a (b+1), V2 (a-1) (b+1), V2 (a-1) b, V2 (a+1) (b-1)]
