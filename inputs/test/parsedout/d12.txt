@@ -1,0 +1,58 @@
+fromList [
+    
+    (Start,      [Small "b", Large "A"                          ]),
+    (End,        [Small "b", Large "A"                          ]),
+    (Small "b",  [Start,End, Small "d" ,Large "A"               ]),
+    (Small "c",  [Large "A"                                     ]),
+    (Small "d",  [Small "b"                                     ]),
+    (Large "A",  [Start, End, Small "b" ,Small "c"              ])
+    
+    ]
+
+
+
+    Start -> 
+        [
+            [Small "b", End], 
+            [Small "b", Large "A", End], 
+            [Small "b", Large "A", Small "c", Large "A", End],
+            [Large "A", End]
+            [Large "A", Small "b", End]
+            [Large "A", Small "b", Large "A", End]
+            [Large "A", Small "b", Large "A", Small "c", Large "A", End]
+            [Large "A", Small "c", Large "A", End]
+            [Large "A", Small "c", Large "A", Small "b", Large "A", End]
+            [Large "A", Small "c", Large "A", Small "b", End]
+        ]
+
+    Start -> 
+        
+            [Small "b", End]
+        :   [Small "b", Large "A", End]
+        :   [Small "b", Large "A", Small "c", Large "A", End]
+        :   [Large "A", End]
+        :   [Large "A", Small "b", End]
+        :   [Large "A", Small "b", Large "A", End]
+        :   [Large "A", Small "b", Large "A", Small "c", Large "A", End]
+        :   [Large "A", Small "c", Large "A", End]
+        :   [Large "A", Small "c", Large "A", Small "b", Large "A", End]
+        :   [Large "A", Small "c", Large "A", Small "b", End]
+        : []
+
+    (Start,      [
+        [Small "b", End], 
+        [Small "b", Large "A", End], 
+        [Small "b", Large "A", Small "c", Large "A", End],
+        [Large "A", End]
+        [Large "A", Small "b", End]
+        [Large "A", Small "b", Large "A", End]
+        [Large "A", Small "b", Large "A", Small "c", Large "A", End]
+        [Large "A", Small "c", Large "A", End]
+        [Large "A", Small "c", Large "A", Small "b", Large "A", End]
+        [Large "A", Small "c", Large "A", Small "b", End]
+        
+        
+        
+        [Small "b", Large "A", Small "b"], 
+        [Small "b", Small "d"]                          ]),
+    Small "b",  [Start,End, Small "d" ,Large "A"               ]),

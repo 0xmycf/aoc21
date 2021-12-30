@@ -20,6 +20,7 @@ default-extensions:
   - LambdaCase
   - TupleSections
   - BlockArguments
+  - ScopedTypeVariables
 
 # Metadata used when publishing your package
 # synopsis:            Short description of your package

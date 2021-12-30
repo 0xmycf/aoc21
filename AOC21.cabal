@@ -48,6 +48,7 @@ library
       LambdaCase
       TupleSections
       BlockArguments
+      ScopedTypeVariables
   ghc-options: -Wall
   build-depends:
       advent-of-code-api
@@ -81,6 +82,7 @@ executable AOC21-exe
       LambdaCase
       TupleSections
       BlockArguments
+      ScopedTypeVariables
   ghc-options: -Wall -threaded -rtsopts -with-rtsopts=-N
   build-depends:
       AOC21
@@ -113,6 +115,7 @@ test-suite AOC21-test
       LambdaCase
       TupleSections
       BlockArguments
+      ScopedTypeVariables
   ghc-options: -Wall -threaded -rtsopts -with-rtsopts=-N
   build-depends:
       AOC21
@@ -143,6 +146,7 @@ benchmark AOC21-bench
       LambdaCase
       TupleSections
       BlockArguments
+      ScopedTypeVariables
   ghc-options: -Wall -O2
   build-depends:
       AOC21
