@@ -9,18 +9,23 @@ module Common.Days
 ( initDay
 , getPrompt
 , getInput
-,promptBlock,inputBlock,submit,submitBlock) where
+, promptBlock
+, inputBlock
+, submit
+, submitBlock
+) where
 
 import           Data.Maybe       (fromMaybe)
 import           Data.Text        (Text)
 import           Text.Read        (readMaybe)
 
-import           Advent           (AoC (AoCInput, AoCPrompt, AoCSubmit), AoCError,
+import           Advent           (AoC (AoCInput, AoCPrompt, AoCSubmit),
+                                   AoCError,
                                    AoCOpts (AoCOpts, _aCache, _aForce, _aSessionKey, _aThrottle, _aYear),
-                                   Part, mkDay_, runAoC, SubmitRes)
+                                   Part, SubmitRes, mkDay_, runAoC)
 import           Control.Monad    ((>=>))
 import qualified Data.Map         as Map
-import           System.Directory (createDirectoryIfMissing, doesFileExist)
+import           System.Directory (createDirectoryIfMissing, doesFileExist, renameFile)
 import           System.Exit      (exitFailure)
 
 type Answer = String
@@ -65,6 +70,8 @@ initDay = do
             writeFile ("./src/Day" ++ show dayNum' ++ "/" ++ "Day" ++ show dayNum' ++ ".hs") fileTemplate
             let dayAsInteger = pure . toInteger .  fromEnum $ dayNum'
             promptBlock dayAsInteger *> inputBlock dayAsInteger
+            dayAsInteger >>= \x -> 
+                renameFile ("inputs/auto/input/2021/" ++ show x ++ ".txt") ("inputs/auto/input/2021/Day" ++ show dayNum' ++ ".txt")
 
 
 parseDayFile :: Maybe Int -> String -> (Maybe DayNumber, String)
@@ -121,6 +128,6 @@ submitBlock day part ans = do
                             p <- part
                             a <- ans
                             s <- submit d p a
-                            case s of 
+                            case s of
                               Left ace     -> print ace *> exitFailure
-                              Right (a',b) -> print a' *> print "" *> print b 
+                              Right (a',b) -> print a' *> print "" *> print b
