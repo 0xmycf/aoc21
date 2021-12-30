@@ -42,6 +42,7 @@ dependencies:
 - finite
 - vector
 - text
+- split
 
 ghc-options:
 - -Wall
