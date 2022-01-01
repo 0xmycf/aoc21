@@ -7,10 +7,10 @@ module DayFourteen.DayFourteen
 , problemTwo
 ) where
 
-import           Common.Lib    (frequencyMap, getLines)
-import           Data.List     (unfoldr)
-import           Data.Map      (Map)
-import qualified Data.Map      as Map
+import           Common.Lib (frequencyMap, getLines)
+import           Data.Map   (Map)
+import qualified Data.Map   as Map
+import           GHC.Base   (liftM2)
 
 inputPath :: FilePath
 inputPath = "./inputs/auto/input/2021/DayFourteen.txt"
@@ -36,9 +36,9 @@ input path = let inputs = filter (/=[]) <$> getLines path
                     rest = Map.fromList . fmap toMap . drop 1 $ inp
                 pure (poly, rest)
                 where
-                toMap :: String -> (PC, Char)
-                toMap (a:b:' ':'-':'>':' ':c:_) = (PC [a,b], c)
-                toMap x = error $ "Parse error at: " ++ x
+                    toMap :: String -> (PC, Char)
+                    toMap (a:b:' ':'-':'>':' ':c:_) = (PC [a,b], c)
+                    toMap x = error $ "Parse error at: " ++ x
 
 mainDayFourteen :: IO ()
 mainDayFourteen = putStrLn "Day Fourteen..." >> problemOne >> problemTwo >> putStrLn "Day Fourteen over.\n "
@@ -59,9 +59,7 @@ testDayFourteen = do
 -}
 
 problemOne :: IO ()
-problemOne = do
-    (str, tmp) <- input inputPath
-    print . factory str tmp $ 10
+problemOne = input inputPath >>= \(str, tmp) -> print . factory str tmp $ 10
 
 {-
     Bench with 1-20 and 40
@@ -86,37 +84,17 @@ problemOne = do
     variance introduced by outliers: 21% (moderately inflated)
 -}
 
-coorInp :: IO (Polymer, Template)
-coorInp = input inputPath
+-- | for bench
+corrInp :: IO (Polymer, Template)
+corrInp = input inputPath
 
-problemTwo :: IO Int
-problemTwo = do
-    (str, tmp) <- coorInp
-    -- print . factory str tmp $ 1
-    -- print . factory str tmp $ 2
-    -- print . factory str tmp $ 3
-    -- print . factory str tmp $ 4
-    -- print . factory str tmp $ 5
-    -- print . factory str tmp $ 6
-    -- print . factory str tmp $ 7
-    -- print . factory str tmp $ 8
-    -- print . factory str tmp $ 9
-    -- print . factory str tmp $ 10
-    -- print . factory str tmp $ 11
-    -- print . factory str tmp $ 12
-    -- print . factory str tmp $ 13
-    -- print . factory str tmp $ 14
-    -- print . factory str tmp $ 15 
-    -- print "20"
-    -- print . factory str tmp $ 20
-    -- print "40"
-    pure $ factory str tmp 40
+problemTwo :: IO ()
+problemTwo = corrInp >>= \(str, tmp) -> print . factory str tmp $ 40
 
 factory :: Polymer -> Map PC Char -> Int -> Int
-factory str tmp i = (\v -> maximum v - minimum v )
-            . Map.elems . toCharFreq . last . take i . unfoldr (Just . printing tmp) $ str
+factory str tmp i = liftM2 (-) maximum minimum -- or with points: (\v -> maximum v - minimum v )
+            . Map.elems . toCharFreq . (!! i) . iterate (`printPolymer` tmp) $ str
         where
-        printing tmp v = let a = printPolymer v tmp in (a,a)
         toCharFreq :: Polymer -> Map Char Int
         toCharFreq poly = (\x -> if odd x then (x `div` 2) + 1 else x `div` 2) <$> Map.foldlWithKey (\acc (PC (a:b:_)) val ->
             Map.unionWith (+) acc (Map.fromListWith (+) [(a, val), (b, val)])) Map.empty poly
@@ -124,7 +102,8 @@ factory str tmp i = (\v -> maximum v - minimum v )
 printPolymer :: Polymer -> Template -> Polymer
 printPolymer poly tmp = newComps
     where
-    newComps = foldl (\acc v -> let c = tmp Map.! v; (a:b:_) = _comp v in Map.unionWith (+) acc (Map.fromList [(PC [a,c], amnt v), (PC [c,b], amnt v)])) Map.empty $ Map.keys poly
+    newComps = foldl (\acc v -> let c = tmp Map.! v; (a:b:_) = _comp v
+        in Map.unionWith (+) acc (Map.fromList [(PC [a,c], amnt v), (PC [c,b], amnt v)])) Map.empty $ Map.keys poly
     amnt v   = poly Map.! v
 
 charsToPC :: Char -> Char -> PC
