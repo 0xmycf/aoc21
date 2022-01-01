@@ -6,13 +6,13 @@ module DaySix.DaySix
 , problemTwo
 ) where
 
-import Common.Lib (parse)
-import Linear (V2(..))
-import Data.List (group, sort)
+import           Common.Lib  (parse)
+import           Data.List   (group, sort)
+import           Linear      (V2 (..))
 
+import           Data.Map    (Map)
 import qualified Data.Map    as Map
 import qualified Text.Parsec as Parsec
-import Data.Map (Map)
 
 inputPath :: String
 inputPath = "./inputs/DaySix.txt"

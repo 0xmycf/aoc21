@@ -1,14 +1,16 @@
 {-# OPTIONS_GHC -Wno-incomplete-patterns #-}
+{-# OPTIONS_GHC -Wno-name-shadowing #-}
 module DayFourteen.DayFourteen
 ( mainDayFourteen
 , testDayFourteen
+, problemOne
+, problemTwo
 ) where
 
 import           Common.Lib    (frequencyMap, getLines)
-import           Data.List     (unfoldr, sort)
+import           Data.List     (unfoldr)
 import           Data.Map      (Map)
 import qualified Data.Map      as Map
-import System.Directory.Internal.Prelude (exitFailure)
 
 inputPath :: FilePath
 inputPath = "./inputs/auto/input/2021/DayFourteen.txt"
@@ -48,62 +50,81 @@ testDayFourteen = do
     print $ printPolymer str tmp
     putStrLn "Test Day Fourteen over.\n"
 
+{-
+    I did a 'ad-hoc' bench:
+    time                 739.5 μs   (639.2 μs .. 856.1 μs)
+                         0.855 R²   (0.759 R² .. 0.967 R²)
+    mean                 712.7 μs   (661.0 μs .. 834.6 μs)
+    std dev              247.8 μs   (108.5 μs .. 413.4 μs)
+-}
+
 problemOne :: IO ()
 problemOne = do
-    (str, tmp) <- input testPath
+    (str, tmp) <- input inputPath
     print . factory str tmp $ 10
 
--- don't do do that
-problemTwo :: IO ()
+{-
+    Bench with 1-20 and 40
+    time                 11.18 ms   (9.913 ms .. 12.94 ms)
+                         0.874 R²   (0.785 R² .. 0.955 R²)
+    mean                 11.17 ms   (10.54 ms .. 12.27 ms)
+    std dev              2.153 ms   (1.329 ms .. 3.331 ms)
+    variance introduced by outliers: 81% (severely inflated)
+
+    Bench with only 40
+    time                 3.142 ms   (2.973 ms .. 3.376 ms)
+                         0.965 R²   (0.927 R² .. 0.997 R²)
+    mean                 3.113 ms   (3.048 ms .. 3.321 ms)
+    std dev              325.5 μs   (165.5 μs .. 620.3 μs)
+    variance introduced by outliers: 68% (severely inflated)
+
+    Bench without printing and without opening
+    time                 3.019 ms   (2.893 ms .. 3.148 ms)
+                         0.994 R²   (0.990 R² .. 0.999 R²)
+    mean                 2.992 ms   (2.964 ms .. 3.030 ms)
+    std dev              108.5 μs   (85.55 μs .. 146.2 μs)
+    variance introduced by outliers: 21% (moderately inflated)
+-}
+
+coorInp :: IO (Polymer, Template)
+coorInp = input inputPath
+
+problemTwo :: IO Int
 problemTwo = do
-    (str, tmp) <- input inputPath
-    getline <- print "Are you sure you want to execute Day 14 Part 2?" *> getLine 
-    case getline of
-        "True"  -> do
-            print . factory str tmp $ 1
-            print . factory str tmp $ 2
-            print . factory str tmp $ 3
-            print . factory str tmp $ 4
-            print . factory str tmp $ 5
-            print . factory str tmp $ 6
-            print . factory str tmp $ 7
-            print . factory str tmp $ 8
-            print . factory str tmp $ 9
-            print . factory str tmp $ 10
-            print . factory str tmp $ 11
-            print . factory str tmp $ 12
-            print . factory str tmp $ 13
-            print . factory str tmp $ 14
-            print . factory str tmp $ 15 -- until here its okay, after that it gets insanely slow
-            print . factory str tmp $ 20
-            print . factory str tmp $ 40
-        _       -> exitFailure
+    (str, tmp) <- coorInp
+    -- print . factory str tmp $ 1
+    -- print . factory str tmp $ 2
+    -- print . factory str tmp $ 3
+    -- print . factory str tmp $ 4
+    -- print . factory str tmp $ 5
+    -- print . factory str tmp $ 6
+    -- print . factory str tmp $ 7
+    -- print . factory str tmp $ 8
+    -- print . factory str tmp $ 9
+    -- print . factory str tmp $ 10
+    -- print . factory str tmp $ 11
+    -- print . factory str tmp $ 12
+    -- print . factory str tmp $ 13
+    -- print . factory str tmp $ 14
+    -- print . factory str tmp $ 15 
+    -- print "20"
+    -- print . factory str tmp $ 20
+    -- print "40"
+    pure $ factory str tmp 40
 
 factory :: Polymer -> Map PC Char -> Int -> Int
 factory str tmp i = (\v -> maximum v - minimum v )
-            . Map.elems . frequencyMap . foldl toString "" . Map.toList . last . take i . unfoldr (Just . printing tmp) $ str
-        where -- . fmap halveIt 
+            . Map.elems . toCharFreq . last . take i . unfoldr (Just . printing tmp) $ str
+        where
         printing tmp v = let a = printPolymer v tmp in (a,a)
-        toString acc (PC (a:b:_), i) = let ih = (i `div` 2) + 1 in 
-            acc ++ replicate ih a ++ replicate ih b
-        halveIt = \x -> if odd x then (x `div` 2) + 1 else x `div` 2
+        toCharFreq :: Polymer -> Map Char Int
+        toCharFreq poly = (\x -> if odd x then (x `div` 2) + 1 else x `div` 2) <$> Map.foldlWithKey (\acc (PC (a:b:_)) val ->
+            Map.unionWith (+) acc (Map.fromListWith (+) [(a, val), (b, val)])) Map.empty poly
 
--- | TODO find a better data structure to represent this and speed it up
 printPolymer :: Polymer -> Template -> Polymer
-printPolymer poly tmp = poly'
+printPolymer poly tmp = newComps
     where
-    -- faster but not fast enough...
-    -- need to get rid of the list once and for all, maybe use vectors here? directly using a Map would be nicer though
-    newComps = foldl (\acc v -> let c = tmp Map.! v; (a:b:_) = _comp v in putInAcc (PC [a,c]) (PC [c,b]) acc v) [] $ Map.keys poly
-    -- newComps = concat . concatMap (\v -> let c = tmp Map.! v; (a:b:_) = _comp v in replicate (amnt v) [PC [a,c], PC [c,b]]) $ Map.keys poly
-    poly'    = frequencyMap newComps
-    amnt v   = poly Map.! v
-    putInAcc pc1 pc2 acc v = foldl (\b _ -> pc1 : pc2 :  b) acc [1..(amnt v)] --acc 
-
-printPolymer' poly tmp = sort newComps
-    where
-    newComps = concat . concatMap (\v -> let c = tmp Map.! v; (a:b:_) = _comp v in replicate (amnt v) [PC [a,c], PC [c,b]]) $ Map.keys poly
-    poly'    = frequencyMap newComps
+    newComps = foldl (\acc v -> let c = tmp Map.! v; (a:b:_) = _comp v in Map.unionWith (+) acc (Map.fromList [(PC [a,c], amnt v), (PC [c,b], amnt v)])) Map.empty $ Map.keys poly
     amnt v   = poly Map.! v
 
 charsToPC :: Char -> Char -> PC

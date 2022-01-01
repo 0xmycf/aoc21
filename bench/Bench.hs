@@ -1,15 +1,17 @@
+{-# OPTIONS_GHC -Wno-unused-top-binds #-}
+{-# OPTIONS_GHC -Wno-name-shadowing #-}
 
-import Criterion (bench, whnf, bgroup, nfIO)
-import qualified Criterion.Main as CMain
-import qualified DaySix.DaySix  as DaySix
+import           Criterion               (bench, bgroup, nfIO)
+import qualified Criterion.Main          as CMain
+import qualified DayFourteen.DayFourteen as DayFourteen
 
 
 main :: IO ()
 main = do
     CMain.defaultMain [
-      bgroup "Day 6" [ bench "1" $ nfIO DaySix.problemOne    -- bench "example" $ whnf exampleBench 100000000
-                    -- , bench "2" $ nfIO DaySix.problemTwo
-                     ] 
+      bgroup "Day 14" [ --bench "1" $ nfIO DayFourteen.problemOne    -- bench "example" $ whnf exampleBench 100000000
+                       bench "2" $ nfIO DayFourteen.problemTwo
+                      ]
       ]
 
 -- | creates a list of length Int containing Int
@@ -17,7 +19,7 @@ main = do
 exampleBench :: Int -> [Int]
 exampleBench i = listing i []
     where listing 0 acc = acc
-          listing i acc  = listing (i-1) (1 : acc) 
+          listing i acc = listing (i-1) (1 : acc)
 
 {-
     The above example produced:
