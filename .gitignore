@@ -130,3 +130,4 @@ DayOne/Test/*
 DayFourSrc_copy_before_rewrite.txt
 inputacceio.txt
 config.txt
+cache/prompt/*
