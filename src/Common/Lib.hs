@@ -16,6 +16,7 @@ import qualified Data.Map              as Map
 import           Linear                (V2 (V2))
 import qualified Text.Parsec           as Parsec
 
+type Point = V2 Int
 
 getLines :: FilePath -> IO [String]
 getLines = fmap lines . readFile
@@ -31,6 +32,15 @@ mapIdx f l = zipWith f l [0..]
 -- | parses a list like 1,2,3,4,5 to [1,2,3,4,5]
 commaListParser :: String -> IO (Either Parsec.ParseError [Int])
 commaListParser s = fmap (fmap read) . parse (Parsec.sepBy (Parsec.many Parsec.digit) (Parsec.char ',')) <$> readFile s
+
+-- | Parses a grid
+--   Grid is indexed like a matrix
+--   Grid looks like this:
+--   (1,1) (1,2) (1,3) ...
+--   (2,1) (2,2) (2,3) ...
+--   ...
+gridParser :: (Char -> a) -> [String] -> Map Point a
+gridParser f = Map.fromList . concat . mapIdx (\a idx1 -> mapIdx (\b idx2 -> (V2 (idx1 + 1) (idx2 + 1), f b)) a)
 
 -- | Creates a bitmask out of the char using the ord function
 -- | ord 'a' = 97

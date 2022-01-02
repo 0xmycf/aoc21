@@ -12,6 +12,9 @@ inputPath = "./inputs/auto/input/2021/DayX.txt"
 testPath :: FilePath
 testPath  = "./inputs/test/DayX.txt"
 
+outPath :: FilePath
+outPath = "./inputs/test/parsedout/DayX.txt"
+
 -- | parses the input depending on the FilePath given
 input :: FilePath -> IO ()
 input path = let inputs = id <$> getLines path
