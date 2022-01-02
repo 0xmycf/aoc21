@@ -6,6 +6,7 @@ module DayFifteen.DayFifteen
 import           Common.Lib    (Point, getLines, getNeighbors, gridParser)
 import           Control.Monad ((>=>))
 import           Data.Char     (digitToInt)
+import           Data.List     (nub)
 import           Data.Map      (Map)
 import           Data.Maybe    (fromJust, fromMaybe, isJust)
 import           Data.Set      (Set)
@@ -73,19 +74,20 @@ path cave = go startNode Set.empty (Map.insert (V2 1 1) (Knot (Just 0) (V2 1 1))
     where
     go :: Point -> Set Point -> Nodes -> Heap.MinHeap Knot -> IO Nodes
     go _ _ nodes _ | all isJust (fmap (_val . snd) . Map.toList $ nodes) = pure nodes
-    go currentCave _ nodes _ | currentCave == endNode = pure nodes
+    go currentCave seen nodes heap | currentCave `elem` seen =
+                                    let p = _point . fromMaybe (error $ show (Heap.viewHead heap)) $ Heap.viewHead heap
+                                    in go p seen nodes (fromMaybe (error "Tail error") . Heap.viewTail $ heap)
     go currentCave seen nodes heap = do
         let seen'   = Set.insert currentCave seen
             nbs     = filter (\v -> let nb = Map.lookup v cave in isJust nb && v `notElem` seen') . getNeighbors $ currentCave
             nbKnots = (toJust . (nodes Map.!) <$> nbs)
-            heap'   = recalculateHeap (filter (\(Knot _ p) -> p `notElem` seen') (nbKnots ++ Heap.toList heap))
+            heap'   = recalculateHeap  (nub $ nbKnots ++ Heap.toList heap)
             nodes'  = Map.union (Map.fromList $ nbs `zip` nbKnots) nodes
             p       = _point . fromMaybe (error $ show (Heap.viewHead heap') ++ "  " ++ show currentCave ++ "  " ++ show nbs ) $ Heap.viewHead heap'
             in do
                 -- its interesting seeing it go up and down
                 print $ Heap.size heap'
-                print $ "currentCave  " ++ show currentCave
-                go p (Set.insert currentCave seen) nodes' heap'
+                go p (Set.insert currentCave seen) nodes' (fromMaybe (error "Tail error main go"). Heap.viewTail $ heap')
         where
         Knot val _ = nodes Map.! currentCave
         toJust (Knot Nothing a) = Knot (fmap (+( cave Map.! a   )) val) a
