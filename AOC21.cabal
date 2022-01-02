@@ -25,6 +25,7 @@ source-repository head
 library
   exposed-modules:
       Common.Days
+      Common.Graph
       Common.Lib
       DayEight.DayEight
       DayEleven.DayEleven
@@ -60,6 +61,7 @@ library
     , directory
     , finitary
     , finite
+    , heap
     , linear
     , matrix
     , parsec
@@ -95,6 +97,7 @@ executable AOC21-exe
     , containers
     , finitary
     , finite
+    , heap
     , linear
     , matrix
     , parsec
@@ -130,6 +133,7 @@ test-suite AOC21-test
     , containers
     , finitary
     , finite
+    , heap
     , linear
     , matrix
     , parsec
@@ -162,6 +166,7 @@ benchmark AOC21-bench
     , criterion
     , finitary
     , finite
+    , heap
     , linear
     , matrix
     , parsec

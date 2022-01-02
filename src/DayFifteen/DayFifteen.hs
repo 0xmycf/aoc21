@@ -3,14 +3,16 @@ module DayFifteen.DayFifteen
 , testDayFifteen
 ) where
 
-import           Common.Lib (Point, getLines, gridParser, getNeighbors)
-import           Data.Char  (digitToInt)
-import           Data.Map   (Map)
-import           Data.Set   (Set)
-import           Linear     (V2 (V2))
-import qualified Data.Map   as Map
-import qualified Data.Set   as Set
-import Data.Maybe (isJust)
+import           Common.Graph (adjFromNeighbs)
+import           Common.Lib   (Point, getLines, getNeighbors, gridParser)
+import           Data.Char    (digitToInt)
+import qualified Data.Heap    as Heap
+import           Data.Map     (Map)
+import qualified Data.Map     as Map
+import           Data.Maybe   (isJust)
+import           Data.Set     (Set)
+import qualified Data.Set     as Set
+import           Linear       (V2 (V2))
 
 inputPath :: FilePath
 inputPath = "./inputs/auto/input/2021/DayFifteen.txt"
@@ -18,8 +20,17 @@ inputPath = "./inputs/auto/input/2021/DayFifteen.txt"
 testPath :: FilePath
 testPath  = "./inputs/test/DayFifteen.txt"
 
+data Knot = Knot {
+              _val  :: Int
+            , _succ :: Maybe Knot
+            } deriving (Show, Read, Eq)
+
+instance Ord Knot where
+  Knot val _ `compare` Knot val2 _ = compare val val2
+
 type Cave = Map Point Int
 type Path = [Point]
+type Nodes = Map Point Knot
 
 -- | parses the input depending on the FilePath given
 input :: FilePath -> IO Cave
@@ -32,6 +43,8 @@ testDayFifteen :: IO ()
 testDayFifteen = do
     putStrLn "Test Day Fifteen..."
     inp <- input testPath
+    print . adjFromNeighbs (const True) $ inp
+    print (Heap.fromList [Knot 100 Nothing , Knot 2 Nothing, Knot 10 (Just $ Knot 10000000 Nothing)] :: Heap.MinHeap Knot)
     writeFile "./inputs/test/parsedout/15.txt" (show inp)
     putStrLn "Test Day Fifteen over.\n"
 
@@ -45,20 +58,20 @@ problemTwo = print "to be impl"
 endNode :: Point
 endNode = V2 100 100
 
+startNode :: Point
+startNode = V2 1 1
+
 -- | Dijkstra, but I didn't know it had a name
-path :: Cave -> Point -> Point -> Path 
-path cave start endPos = go (Set.singleton start) Map.empty [] 0 start
+path :: Cave -> Path
+path cave = go startNode Set.empty (Map.singleton startNode (Knot 0 Nothing))
     where
-    -- | Set Point    = All already visited points
-    -- | Map Path Int = All paths visited beforehand
-    -- | Path         = The current path
-    go :: Set Point -> Map Path Int -> Path -> Int -> Point -> Path
-    go seen otherPaths currentPath currentDanger currentPos
-        | any ( > currentDanger) (Map.elems otherPaths) = undefined 
-        | currentPos == endPos = currentPath
-        | otherwise = undefined
-        where
-        neighbs = filter (\v -> let nb = Map.lookup v cave in isJust nb && v `notElem` seen) . getNeighbors
+    go :: Point -> Set Point -> Nodes -> Path
+    go currentCave seen nodes =
+        let seen' = Set.insert currentCave seen
+            nbs   = filter (\v -> let nb = Map.lookup v cave in isJust nb && v `notElem` seen') . getNeighbors $ currentCave
+            --heap  = Heap.
+        in  undefined
+
 
 
 {-
