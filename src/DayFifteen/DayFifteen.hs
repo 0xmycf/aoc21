@@ -1,14 +1,17 @@
 module DayFifteen.DayFifteen
 ( mainDayFifteen
 , testDayFifteen
+, problemOne
+, problemTwo
 ) where
 
 import           Common.Lib    (Point, getLines, getNeighbors, gridParser)
 import           Control.Monad ((>=>))
-import           Data.Char     (digitToInt)
-import           Data.List     (nub)
+import           Data.Char     (digitToInt, intToDigit)
+import           Data.Function ((&))
+import           Data.Functor  (($>))
 import           Data.Map      (Map)
-import           Data.Maybe    (fromJust, fromMaybe, isJust)
+import           Data.Maybe    (fromJust, isJust, mapMaybe)
 import           Data.Set      (Set)
 import           Linear        (V2 (V2))
 import qualified Data.Heap     as Heap
@@ -43,51 +46,81 @@ type Nodes = Map Point Knot
 input :: FilePath -> IO Cave
 input = (gridParser digitToInt <$>) . getLines
 
+getActualCave :: FilePath -> IO Cave
+getActualCave = (gridParser digitToInt . makeBigger <$>) . getLines
+    where
+    makeBigger :: [String] -> [String]
+    makeBigger xs = fmap (concat . take 5 . iterate nextSection) xs ++ (concat . take 4 . fmap (goDown xs)) [1..]
+    goDown :: [String] -> Int -> [String]
+    goDown x d = let xs = fmap (concat . take 5 . drop d . iterate nextSection) x
+               in xs
+
+nextSection :: String -> String
+nextSection = fmap nextNum
+
+nextNum :: Char -> Char
+nextNum '9' = '1'
+nextNum  c  = (digitToInt c :: Int) + 1 & intToDigit
+
 mainDayFifteen :: IO ()
 mainDayFifteen = putStrLn "Day Fifteen..." >> problemOne >> problemTwo >> putStrLn "Day Fifteen over.\n "
 
 testDayFifteen :: IO ()
-testDayFifteen = input testPath >>= path >>= (printReturn >=> writeFile "./inputs/test/parsedout/15.txt" . show) . Map.lookup (V2 10 10)
+testDayFifteen = getActualCave testPath >>= (printReturn >=> writeFile "./inputs/test/parsedout/15t.txt" . show) . path (V2 50 50)
+--testDayFifteen = input testPath >>= (printReturn >=> writeFile "./inputs/test/parsedout/15.txt" . show) . Map.lookup (V2 10 10) . path
+
+isInputSame :: IO ()
+isInputSame = do
+    a <- getActualCave testPath
+    b <- input "inputs/test/15b.txt"
+    print $ a == b
 
 printReturn :: Show a => a -> IO a
-printReturn a = do
-    print a
-    pure a
+printReturn a = print a $> a
 
 problemOne :: IO ()
-problemOne = input inputPath >>= path >>= (printReturn >=> writeFile "./inputs/test/parsedout/15.txt" . show) . Map.lookup (V2 100 100)
+problemOne = input inputPath >>= (printReturn >=> writeFile "./inputs/test/parsedout/15a.txt" . show) . Map.lookup (V2 100 100) . path (V2 100 100)
 
 problemTwo :: IO ()
-problemTwo = print "Do you think I am insane or what? I cant run this code with an input 5 times as big..."
+problemTwo = getActualCave inputPath >>= (printReturn >=> writeFile "./inputs/test/parsedout/15b.txt" . show) . Map.lookup (V2 500 500) . path (V2 500 500)
 
 endNode :: Point
-endNode = V2 100 100
---endNode = V2 10 10
---endNode = V2 3 3
+endNode = V2 500 500
 
 startNode :: Point
 startNode = V2 1 1
 
--- | (Bad) Dijkstra, but I didn't know it had a name
-path :: Cave -> IO Nodes
-path cave = go startNode Set.empty (Map.insert (V2 1 1) (Knot (Just 0) (V2 1 1)) $ Map.mapWithKey (const . Knot Nothing) cave) Heap.empty
+{-
+    Ok - Part 1
+    time                 74.93 ms   (70.64 ms .. 80.82 ms)
+                         0.992 R²   (0.985 R² .. 1.000 R²)
+    mean                 72.00 ms   (71.17 ms .. 74.86 ms)
+    std dev              2.434 ms   (660.9 μs .. 4.111 ms)
+
+
+    Okish - Part 2
+    time                 4.445 s    (3.574 s .. 5.082 s)
+                         0.994 R²   (0.992 R² .. 1.000 R²)
+    mean                 4.317 s    (3.922 s .. 4.471 s)
+    std dev              283.4 ms   (19.74 ms .. 357.6 ms)
+    variance introduced by outliers: 19% (moderately inflated)
+-}
+-- | Dijkstra, but I didn't know it had a name
+path :: Point -> Cave -> Nodes
+path endpt cave = go startNode Set.empty (Map.insert (V2 1 1) (Knot (Just 0) (V2 1 1)) $ Map.mapWithKey (const . Knot Nothing) cave) Heap.empty
     where
-    go :: Point -> Set Point -> Nodes -> Heap.MinHeap Knot -> IO Nodes
-    go _ _ nodes _ | all isJust (fmap (_val . snd) . Map.toList $ nodes) = pure nodes
-    go currentCave seen nodes heap | currentCave `elem` seen =
-                                    let p = _point . fromMaybe (error $ show (Heap.viewHead heap)) $ Heap.viewHead heap
-                                    in go p seen nodes (fromMaybe (error "Tail error") . Heap.viewTail $ heap)
+    go :: Point -> Set Point -> Nodes -> Heap.Heap Knot -> Nodes
+    go _ _ nodes _ | isJust . _val $ nodes Map.! endpt       = nodes
+    go currentCave seen nodes heap | currentCave `Set.member` seen =
+                                    let p = _point . Heap.minimum $ heap
+                                    in go p seen nodes . Heap.deleteMin $ heap
     go currentCave seen nodes heap = do
         let seen'   = Set.insert currentCave seen
-            nbs     = filter (\v -> let nb = Map.lookup v cave in isJust nb && v `notElem` seen') . getNeighbors $ currentCave
-            nbKnots = (toJust . (nodes Map.!) <$> nbs)
-            heap'   = recalculateHeap  (nub $ nbKnots ++ Heap.toList heap)
-            nodes'  = Map.union (Map.fromList $ nbs `zip` nbKnots) nodes
-            p       = _point . fromMaybe (error $ show (Heap.viewHead heap') ++ "  " ++ show currentCave ++ "  " ++ show nbs ) $ Heap.viewHead heap'
-            in do
-                -- its interesting seeing it go up and down
-                print $ Heap.size heap'
-                go p (Set.insert currentCave seen) nodes' (fromMaybe (error "Tail error main go"). Heap.viewTail $ heap')
+            nbs     = mapMaybe (fmap toJust . (`Map.lookup` nodes)) . getNeighbors $ currentCave
+            heap'   = Heap.union (Heap.fromList nbs) heap
+            nodes'  = Map.union (Map.fromList $ fmap _point nbs `zip` nbs) nodes
+            p       = _point $ Heap.minimum heap'
+            in go p seen' nodes' (Heap.deleteMin heap')
         where
         Knot val _ = nodes Map.! currentCave
         toJust (Knot Nothing a) = Knot (fmap (+( cave Map.! a   )) val) a
@@ -97,6 +130,3 @@ path cave = go startNode Set.empty (Map.insert (V2 1 1) (Knot (Just 0) (V2 1 1))
             where
             pathDanger = cave Map.! a
 
-
-recalculateHeap :: [Knot] -> Heap.MinHeap Knot
-recalculateHeap = Heap.fromList

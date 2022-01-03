@@ -61,7 +61,7 @@ library
     , directory
     , finitary
     , finite
-    , heap
+    , heaps
     , linear
     , matrix
     , parsec
@@ -97,7 +97,7 @@ executable AOC21-exe
     , containers
     , finitary
     , finite
-    , heap
+    , heaps
     , linear
     , matrix
     , parsec
@@ -133,7 +133,7 @@ test-suite AOC21-test
     , containers
     , finitary
     , finite
-    , heap
+    , heaps
     , linear
     , matrix
     , parsec
@@ -166,7 +166,7 @@ benchmark AOC21-bench
     , criterion
     , finitary
     , finite
-    , heap
+    , heaps
     , linear
     , matrix
     , parsec

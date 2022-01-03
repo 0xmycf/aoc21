@@ -43,7 +43,7 @@ dependencies:
 - vector
 - text
 - split
-- heap
+- heaps
 
 ghc-options:
 - -Wall
