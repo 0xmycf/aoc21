@@ -134,3 +134,4 @@ cache/prompt/*
 /inputs/test/parsedout/15t.txt
 /inputs/test/parsedout/15a.txt
 /inputs/test/parsedout/15b.txt
+*.html
