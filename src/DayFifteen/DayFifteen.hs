@@ -53,7 +53,7 @@ getActualCave = (gridParser digitToInt . makeBigger <$>) . getLines
     makeBigger xs = fmap (concat . take 5 . iterate nextSection) xs ++ (concat . take 4 . fmap (goDown xs)) [1..]
     goDown :: [String] -> Int -> [String]
     goDown x d = let xs = fmap (concat . take 5 . drop d . iterate nextSection) x
-               in xs
+                 in  xs
 
 nextSection :: String -> String
 nextSection = fmap nextNum
@@ -67,7 +67,7 @@ mainDayFifteen = putStrLn "Day Fifteen..." >> problemOne >> problemTwo >> putStr
 
 testDayFifteen :: IO ()
 testDayFifteen = getActualCave testPath >>= (printReturn >=> writeFile "./inputs/test/parsedout/15t.txt" . show) . path (V2 50 50)
---testDayFifteen = input testPath >>= (printReturn >=> writeFile "./inputs/test/parsedout/15.txt" . show) . Map.lookup (V2 10 10) . path
+--testDayFifteen = input testPath >>= (printReturn >=> writeFile "./inputs/test/parsedout/15.txt" . show) . Map.lookup (V2 10 10) . path (V2 10 10)
 
 isInputSame :: IO ()
 isInputSame = do
@@ -79,13 +79,16 @@ printReturn :: Show a => a -> IO a
 printReturn a = print a $> a
 
 problemOne :: IO ()
-problemOne = input inputPath >>= (printReturn >=> writeFile "./inputs/test/parsedout/15a.txt" . show) . Map.lookup (V2 100 100) . path (V2 100 100)
+problemOne = input inputPath >>= (printReturn >=> writeFile "./inputs/test/parsedout/15a.txt" . show) . Map.lookup endNodeA . path endNodeA
 
 problemTwo :: IO ()
-problemTwo = getActualCave inputPath >>= (printReturn >=> writeFile "./inputs/test/parsedout/15b.txt" . show) . Map.lookup (V2 500 500) . path (V2 500 500)
+problemTwo = getActualCave inputPath >>= (printReturn >=> writeFile "./inputs/test/parsedout/15b.txt" . show) . Map.lookup endNodeB . path endNodeB
 
-endNode :: Point
-endNode = V2 500 500
+endNodeA :: Point
+endNodeA = V2 100 100
+
+endNodeB :: Point
+endNodeB = V2 500 500
 
 startNode :: Point
 startNode = V2 1 1
@@ -126,7 +129,7 @@ path endpt cave = go startNode Set.empty (Map.insert (V2 1 1) (Knot (Just 0) (V2
         toJust (Knot Nothing a) = Knot (fmap (+( cave Map.! a   )) val) a
         toJust k@(Knot (Just i) a)
             | i > (+pathDanger) (fromJust val) = Knot (fmap (+(cave Map.! a)) val) a
-            | otherwise               = k
+            | otherwise = k
             where
             pathDanger = cave Map.! a
 
