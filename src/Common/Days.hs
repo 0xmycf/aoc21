@@ -15,9 +15,7 @@ module Common.Days
 , submitBlock
 ) where
 
-import           Data.Maybe       (fromMaybe)
 import           Data.Text        (Text)
-import           Text.Read        (readMaybe)
 
 import           Advent           (AoC (AoCInput, AoCPrompt, AoCSubmit),
                                    AoCError,
@@ -25,13 +23,14 @@ import           Advent           (AoC (AoCInput, AoCPrompt, AoCSubmit),
                                    Part, SubmitRes, mkDay_, runAoC)
 import           Control.Monad    ((>=>))
 import qualified Data.Map         as Map
-import           System.Directory (createDirectoryIfMissing, doesFileExist, renameFile)
+import           System.Directory (createDirectoryIfMissing, doesFileExist,
+                                   renameFile)
 import           System.Exit      (exitFailure)
 
 type Answer = String
 
 data DayNumber
-    = NoDay
+    = Zero
     | One
     | Two
     | Three
@@ -55,27 +54,26 @@ data DayNumber
     | TwentyOne
     | TwentyTwo
     | TwentyThree
-    | TwentyFour deriving (Show, Enum, Eq)
+    | TwentyFour deriving (Show, Read, Enum, Eq)
 
 initDay :: IO ()
 initDay = do
     day <- putStrLn "Please enter the day number" *> getLine -- might change to automatically know what day I am missing
-    (dayNum, fileTemplate) <- parseDayFile (readMaybe day) <$> readFile "./template/DayX.tmp"
-    let dayNum' = fromMaybe NoDay dayNum
-    doesFileExist ("./src/Day" ++ show dayNum' ++ "/" ++ "Day" ++ show dayNum' ++ ".hs") >>= \bl ->
+    (dayNum, fileTemplate) <- parseDayFile (read day) <$> readFile "./template/DayX.tmp"
+    doesFileExist ("./src/Day" ++ show dayNum ++ "/" ++ "Day" ++ show dayNum ++ ".hs") >>= \bl ->
         if bl
         then putStrLn "The file already exists, abandoning..." *> exitFailure
         else do
-            createDirectoryIfMissing True ("./src/Day" ++ show dayNum' ++ "/")
-            writeFile ("./src/Day" ++ show dayNum' ++ "/" ++ "Day" ++ show dayNum' ++ ".hs") fileTemplate
-            let dayAsInteger = pure . toInteger .  fromEnum $ dayNum'
+            createDirectoryIfMissing True ("./src/Day" ++ show dayNum ++ "/")
+            writeFile ("./src/Day" ++ show dayNum ++ "/" ++ "Day" ++ show dayNum ++ ".hs") fileTemplate
+            let dayAsInteger = pure . toInteger .  fromEnum $ dayNum
             promptBlock dayAsInteger *> inputBlock dayAsInteger
-            dayAsInteger >>= \x -> 
-                renameFile ("inputs/auto/input/2021/" ++ show x ++ ".txt") ("inputs/auto/input/2021/Day" ++ show dayNum' ++ ".txt")
+            dayAsInteger >>= \x ->
+                renameFile ("inputs/auto/input/2021/" ++ show x ++ ".txt") ("inputs/auto/input/2021/Day" ++ show dayNum ++ ".txt")
 
 
-parseDayFile :: Maybe Int -> String -> (Maybe DayNumber, String)
-parseDayFile i str = let ei = (toEnum <$> i :: Maybe DayNumber) in (ei , foldl (\acc x -> if x == 'X' then acc ++ show (fromMaybe NoDay ei) else acc ++ [x]) "" str)
+parseDayFile :: Int -> String -> (DayNumber, String)
+parseDayFile i str = let ei = (toEnum i :: DayNumber) in (ei , foldl (\acc x -> if x == 'X' then acc ++ show ei else acc ++ [x]) "" str)
 
 getPrompt :: Integer -> IO (Either Advent.AoCError (Map.Map Advent.Part Text))
 getPrompt day = defaultOpts >>= \x -> runAoC x $ AoCPrompt (mkDay_ day)
@@ -129,5 +127,5 @@ submitBlock day part ans = do
                             a <- ans
                             s <- submit d p a
                             case s of
-                              Left ace     -> print ace *> exitFailure
+                              Left  ace    -> print ace *> exitFailure
                               Right (a',b) -> print a' *> print "" *> print b

@@ -1,5 +1,5 @@
 -- |
--- | A module that holds common methods.
+-- | A module that holds common functions.
 -- |
 -----------------------------------
 module Common.Lib where
@@ -66,7 +66,7 @@ binToDec xs = go (0 :: Integer) (reverse xs)
         go _ []      = 0
         go i (x:xs') = (2^i * read [x]) + go (i+1) xs'
 
--- | gets parallel (to x/y axis) perpendicular vectors to hte input Coordinate
+-- | gets parallel (to x/y axis) perpendicular vectors to the input Coordinate
 getNeighbors :: V2  Int -> [V2  Int]
 getNeighbors (V2 a b) = [V2 a (b-1), V2 (a+1) b, V2 a (b+1), V2 (a-1) b]
 
