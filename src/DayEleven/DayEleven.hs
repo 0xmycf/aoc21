@@ -4,13 +4,13 @@ module DayEleven.DayEleven
 ) where
 
 import           Common.Lib (frequencyMap, getAllNeighbs, getLines, mapIdx)
+import           Data.List  (unfoldr)
 import           Data.Map   (Map)
 import qualified Data.Map   as Map
 import           Data.Maybe (isJust)
 import qualified Data.Set   as Set
 import           Linear     (V2 (V2))
 import           Prelude    hiding (all)
-import Data.List (unfoldr)
 
 
 inputPath :: FilePath
