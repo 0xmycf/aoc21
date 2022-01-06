@@ -1,4 +1,5 @@
 {-# OPTIONS_GHC -Wno-unused-top-binds #-}
+{-# OPTIONS_GHC -Wno-unused-local-binds #-}
 module DaySixteen.DaySixteen
 ( mainDaySixteen
 , testDaySixteen
@@ -48,12 +49,27 @@ testDaySixteen = do
 
 
 problemOne :: IO ()
-problemOne = print "to be impl"
+problemOne = do
+    inp <- input inputPath
+    print . parse packetParser $ inp
+    print . (\case
+      Left  pe -> error $ show pe
+      Right pa -> sumNums pa
+      ) . parse packetParser $ inp
+
+sumNums :: Packet -> Int
+sumNums packet = go (version packet) (typ packet)
+    where
+    go :: Int -> Type -> Int
+    go i t = case t of
+      Literal  _   -> i
+      Operator pas -> i + foldl (\acc p -> go (acc + version p) (typ p)) 0 pas
 
 problemTwo :: IO ()
 problemTwo = print "to be impl"
 
-type Version  = Int
+type Version = Int
+type Length  = Int
 
 data Type
     = Literal  Int
@@ -86,8 +102,40 @@ typeParser = do
         else Operator <$> do
             len <- P.anyChar
             if len == '1'
-                then undefined          -- 1 11 next bits represent the number of sub-packets immediately contained
-                else error "undefined"  -- 0 15 next bits represent the total length in bits
+                then elevenOperator          -- 1 11 next bits represent the number of sub-packets immediately contained
+                else fifteenOperator         -- 0 15 next bits represent the total length in bits
+
+nCharsParser :: Int -> ParsecT String u Identity String
+nCharsParser int = go int (pure "")
+    where
+    go i str
+        | i == 0    = str
+        | otherwise = do
+            c <- P.anyChar
+            go (i-1) ((++[c]) <$> str)
+
+elevenOperator :: ParsecT String u Identity [Packet]
+elevenOperator = do
+    str <- nCharsParser 11
+    nPacketsParser (binToDec str)
+
+fifteenOperator :: ParsecT String u Identity [Packet]
+fifteenOperator = do
+    str     <- nCharsParser 15
+    packets <- nCharsParser (binToDec str)
+    let p = parse (P.many1 packetParser) packets
+    case p of
+      Left  pe -> error . show $ pe
+      Right pa -> pure pa
+
+nPacketsParser :: Int -> ParsecT String u Identity [Packet]
+nPacketsParser int = go int (pure [])
+    where
+    go i p
+        | i == 0 = p
+        | otherwise = do
+            p' <- packetParser
+            go (i-1) ((++[p']) <$> p)
 
 groupParser :: ParsecT String u Identity String
 groupParser = do
