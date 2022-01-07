@@ -6,12 +6,13 @@
 import           Criterion               (bench, bgroup, nfIO)
 import qualified Criterion.Main          as CMain
 import qualified DayFifteen.DayFifteen   as DayFifteen
+import qualified DaySixteen.DaySixteen   as DaySixteen
 
 
 main :: IO ()
 main = do
     CMain.defaultMain [
-      bgroup "Day 15" [ bench "1" $ nfIO DayFifteen.problemOne,    -- bench "example" $ whnf exampleBench 100000000
-                       bench "2" $ nfIO DayFifteen.problemTwo
+      bgroup "Day 16" [ bench "1" $ nfIO DaySixteen.problemOne,    -- bench "example" $ whnf exampleBench 100000000
+                        bench "2" $ nfIO DaySixteen.problemTwo
                       ]
       ]

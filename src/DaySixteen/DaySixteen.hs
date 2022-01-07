@@ -2,6 +2,8 @@
 module DaySixteen.DaySixteen
 ( mainDaySixteen
 , testDaySixteen
+, problemOne
+, problemTwo
 ) where
 
 import           Common.Lib            (binToDec, getLines, parse)
@@ -12,6 +14,7 @@ import           Data.Maybe            (mapMaybe)
 import           Prelude               hiding (lookup)
 import           Text.Parsec           (ParsecT)
 import qualified Text.Parsec           as P
+import Data.Foldable (foldl')
 
 inputPath :: FilePath
 inputPath = "./inputs/auto/input/2021/DaySixteen.txt"
@@ -47,11 +50,16 @@ testDaySixteen = do
     print . fmap (\case
       Left  pe -> error $ show pe
       Right pa -> operate pa ) $ parse packetParser <$> inp
-
+{-
+    time                 6.478 ms   (6.420 ms .. 6.539 ms)
+                         0.998 R²   (0.995 R² .. 0.999 R²)
+    mean                 6.596 ms   (6.544 ms .. 6.689 ms)
+    std dev              206.5 μs   (124.1 μs .. 325.0 μs)
+    variance introduced by outliers: 13% (moderately inflated)
+-}
 problemOne :: IO ()
 problemOne = do
     inp <- input inputPath
-    print . parse packetParser $ inp
     print . (\case
       Left  pe -> error $ show pe
       Right pa -> sumNums pa
@@ -63,8 +71,14 @@ sumNums packet = go (version packet) (typ packet)
     go :: Int -> Type -> Int
     go i = \case 
       Literal  _     -> i
-      Operator _ pas -> i + foldl (\acc p -> go (acc + version p) (typ p)) 0 pas
-
+      Operator _ pas -> i + foldl' (\acc p -> go (acc + version p) (typ p)) 0 pas
+{-
+    time                 7.640 ms   (7.470 ms .. 7.783 ms)
+                         0.997 R²   (0.994 R² .. 0.999 R²)
+    mean                 8.234 ms   (7.929 ms .. 9.670 ms)
+    std dev              1.524 ms   (160.5 μs .. 3.319 ms)
+    variance introduced by outliers: 81% (severely inflated)
+-}
 problemTwo :: IO ()
 problemTwo = do
     inp <- input inputPath
