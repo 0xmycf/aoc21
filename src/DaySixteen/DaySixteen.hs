@@ -1,5 +1,3 @@
-{-# OPTIONS_GHC -Wno-unused-top-binds #-}
-{-# OPTIONS_GHC -Wno-unused-local-binds #-}
 {-# OPTIONS_GHC -Wno-incomplete-patterns #-}
 module DaySixteen.DaySixteen
 ( mainDaySixteen
@@ -21,9 +19,6 @@ inputPath = "./inputs/auto/input/2021/DaySixteen.txt"
 testPath :: FilePath
 testPath  = "./inputs/test/DaySixteen.txt"
 
-outPath :: FilePath
-outPath = "./inputs/test/parsedout/DaySixteen.txt"
-
 mapping :: IO (Map Char String)
 mapping = do
     inp <- getLines "inputs/DaySixteenMapping.txt"
@@ -38,14 +33,12 @@ mapping = do
 input :: FilePath -> IO String
 input path = mapping >>= \x -> concat . mapMaybe (`lookup` x) <$> readFile path
 
-
 testInput :: FilePath -> IO [String]
 testInput path = mapping >>= \x -> fmap (concat . mapMaybe (`lookup` x)) <$> getLines path
 
 mainDaySixteen :: IO ()
 mainDaySixteen = putStrLn "Day Sixteen..." >> problemOne >> problemTwo >> putStrLn "Day Sixteen over.\n "
 
--- [3,54,7,7,0,1,0,0] expected: [3,54,7,9,1,0,0,1]
 testDaySixteen :: IO ()
 testDaySixteen = do
     putStrLn "Test Day Sixteen..."
@@ -54,7 +47,6 @@ testDaySixteen = do
     print . fmap (\case
       Left  pe -> error $ show pe
       Right pa -> operate pa ) $ parse packetParser <$> inp
-
 
 problemOne :: IO ()
 problemOne = do
@@ -85,26 +77,18 @@ operate (Packet _ (Literal i))       = i
 operate p@(Packet _ (Operator o li)) = case o of
   Sum     -> sum     $ fmap operate li
   Product -> product $ fmap operate li
-  Min     -> let folded = foldl1 minP li in case typ folded of
-    Literal  n  -> n
-    _           -> operate folded 
-  Max     -> let folded = foldl1 maxP li in case typ folded of
-    Literal  n -> n
-    _          -> operate folded
+  Min     -> operate . minimum $ li
+  Max     -> operate . maximum $ li 
   GrT     -> greater p
   LeT     -> less    p
   EQT     -> equal   p
   where
-    greater :: Packet -> Int
+    greater, less, equal :: Packet -> Int
     greater (Packet _ (Operator _ [x1, x2])) = if operate x1 > operate x2 then 1 else 0
-    less :: Packet -> Int
     less (Packet _ (Operator _ [x1, x2]))    = if operate x1 < operate x2 then 1 else 0
-    equal :: Packet -> Int
     equal (Packet _ (Operator _ [x1, x2]))   = if operate x1 == operate x2 then 1 else 0
 
-
 type Version = Int
-type Length  = Int
 
 data OID
     = Sum      -- ^ the sum operator
@@ -139,8 +123,6 @@ instance Ord Packet where
   Packet _ (Operator _ li) `compare` Packet _ (Operator _ li') = compare li li'
   _ `compare` _              = error "Cannot compare different Operator Types!"
 
--- is a Semigroup / Monoid instance interesting?
-
 instance Num Packet where
   Packet _ (Literal i)     + Packet _ (Literal ii)    = Packet 0 (Literal $ i + ii)
   Packet _ (Operator _ li) + packet                   = sum li + packet
@@ -150,33 +132,16 @@ instance Num Packet where
   packet                   * Packet _ (Operator _ li) = packet * product li
   Packet _ (Operator _ li) * packet                   = product li * packet
 
-  abs (Packet _ (Literal i))     = Packet 0 (Literal . abs $ i)
-  abs (Packet _ (Operator o li)) = Packet 0 (Operator o $ map abs li)
+  abs (Packet _ (Literal i))        = Packet 0 (Literal . abs $ i)
+  abs (Packet _ (Operator o li))    = Packet 0 (Operator o $ map abs li)
 
   signum (Packet _ (Literal i))     = Packet 0 (Literal . signum $ i)
   signum (Packet _ (Operator o li)) = Packet 0 (Operator o $ map signum li)
 
-  fromInteger i                                       = Packet 0 . Literal . fromInteger $ i
+  fromInteger i                     = Packet 0 . Literal . fromInteger $ i
 
   negate (Packet _ (Literal i))     = Packet 0 (Literal . negate $ i)
   negate (Packet _ (Operator o li)) = Packet 0 (Operator o $ map negate li)
-
--- I am not 100% convinced that min/max functions work as expected
-minP :: Packet -> Packet -> Packet
-p@(Packet _ (Literal i)) `minP` pp@(Packet _ (Literal ii)) =
-    if i < ii
-        then p
-        else pp
-Packet _ (Operator _ i) `minP` packet = minimum i `minP` packet
-packet `minP` Packet _ (Operator _ i) = minimum i `minP` packet
-
-maxP :: Packet -> Packet -> Packet
-p@(Packet _ (Literal i)) `maxP` pp@(Packet _ (Literal ii)) =
-    if ii < i
-        then p
-        else pp
-Packet _ (Operator _ i) `maxP` packet = maximum i `maxP` packet
-packet `maxP` Packet _ (Operator _ i) = maximum i `maxP` packet
 
 packetParser :: ParsecT String u Identity Packet
 packetParser = Packet <$> versionParser <*> typeParser
