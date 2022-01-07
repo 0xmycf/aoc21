@@ -1,4 +1,4 @@
-{-# OPTIONS_GHC -Wno-incomplete-patterns #-}
+-- {-# OPTIONS_GHC -Wno-incomplete-patterns #-}
 module DaySixteen.DaySixteen
 ( mainDaySixteen
 , testDaySixteen
@@ -91,16 +91,15 @@ operate (Packet _ (Literal i))       = i
 operate p@(Packet _ (Operator o li)) = case o of
   Sum     -> sum     $ fmap operate li
   Product -> product $ fmap operate li
-  Min     -> operate . minimum $ li
-  Max     -> operate . maximum $ li 
-  GrT     -> greater p
-  LeT     -> less    p
-  EQT     -> equal   p
+  Min     -> minimum $ fmap operate li
+  Max     -> maximum $ fmap operate li 
+  GrT     -> compare' (>)  p
+  LeT     -> compare' (<)  p
+  EQT     -> compare' (==) p
   where
-    greater, less, equal :: Packet -> Int
-    greater (Packet _ (Operator _ [x1, x2])) = if operate x1 > operate x2 then 1 else 0
-    less (Packet _ (Operator _ [x1, x2]))    = if operate x1 < operate x2 then 1 else 0
-    equal (Packet _ (Operator _ [x1, x2]))   = if operate x1 == operate x2 then 1 else 0
+    compare' :: (Int -> Int -> Bool) -> Packet -> Int -- 144595909277
+    compare' f (Packet _ (Operator _ [x1, x2])) = if operate x1 `f` operate x2 then 1 else 0
+    compare' _ _                                = error "Operator will always be Operator"
 
 type Version = Int
 
@@ -123,39 +122,6 @@ data Packet = Packet
             { version :: Version
             , typ     :: Type
             } deriving (Show, Read)
-
--- Part 2 is really easy in Haskell, you just need to give your data some instances
--- Num, Eq, Ord
-
-instance Eq Packet where
-  Packet _ (Literal     i) == Packet _ (Literal    j) = i == j
-  Packet _ (Operator oo i) == Packet _ (Operator o j) = i == j && oo == o
-  _ == _                                              = False
-
-instance Ord Packet where
-  Packet _ (Literal i)     `compare` Packet _ (Literal i')     = compare i i'
-  Packet _ (Operator _ li) `compare` Packet _ (Operator _ li') = compare li li'
-  _ `compare` _              = error "Cannot compare different Operator Types!"
-
-instance Num Packet where
-  Packet _ (Literal i)     + Packet _ (Literal ii)    = Packet 0 (Literal $ i + ii)
-  Packet _ (Operator _ li) + packet                   = sum li + packet
-  packet                   + Packet _ (Operator _ li) = sum li + packet
-
-  Packet _ (Literal i)     * Packet _ (Literal ii)    = Packet 0 (Literal $ i * ii)
-  packet                   * Packet _ (Operator _ li) = packet * product li
-  Packet _ (Operator _ li) * packet                   = product li * packet
-
-  abs (Packet _ (Literal i))        = Packet 0 (Literal . abs $ i)
-  abs (Packet _ (Operator o li))    = Packet 0 (Operator o $ map abs li)
-
-  signum (Packet _ (Literal i))     = Packet 0 (Literal . signum $ i)
-  signum (Packet _ (Operator o li)) = Packet 0 (Operator o $ map signum li)
-
-  fromInteger i                     = Packet 0 . Literal . fromInteger $ i
-
-  negate (Packet _ (Literal i))     = Packet 0 (Literal . negate $ i)
-  negate (Packet _ (Operator o li)) = Packet 0 (Operator o $ map negate li)
 
 packetParser :: ParsecT String u Identity Packet
 packetParser = Packet <$> versionParser <*> typeParser
