@@ -3,8 +3,9 @@ module DayX.DayX
 , testDayX
 ) where
 
-import           Common.Lib  (getLines, parse)
-import qualified Text.Parsec as Parsec
+import           Common.Lib    (getLines, parse)
+import           Control.Arrow ((&&&))
+import qualified Text.Parsec   as P
 
 inputPath :: FilePath
 inputPath = "./inputs/auto/input/2021/DayX.txt"
@@ -15,22 +16,21 @@ testPath  = "./inputs/test/DayX.txt"
 outPath :: FilePath
 outPath = "./inputs/test/parsedout/DayX.txt"
 
+type Input = [String]
+
 -- | parses the input depending on the FilePath given
-input :: FilePath -> IO ()
+input :: FilePath -> IO Input
 input path = let inputs = id <$> getLines path
-             in pure ()
+             in inputs
 
 mainDayX :: IO ()
-mainDayX = putStrLn "Day X..." >> problemOne >> problemTwo >> putStrLn "Day X over.\n "
+mainDayX = putStrLn "Day X..." >> input inputPath >>= print . (problemOne &&& problemTwo) >> putStrLn "Day X over.\n "
 
 testDayX :: IO ()
-testDayX = do
-    putStrLn "Test Day X..."
-    putStrLn "Test Day X over.\n"
+testDayX = putStrLn "Day X..." >> input testPath >>= print . (problemOne &&& problemTwo) >> putStrLn "Day X over.\n "
 
+problemOne :: Input -> String
+problemOne = const "to be impl"
 
-problemOne :: IO ()
-problemOne = print "to be impl"
-
-problemTwo :: IO ()
-problemTwo = print "to be impl"
+problemTwo :: Input -> String
+problemTwo = const "to be impl"
