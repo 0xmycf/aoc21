@@ -1,5 +1,6 @@
 {-# OPTIONS_GHC -Wno-unused-top-binds #-}
 {-# OPTIONS_GHC -Wno-unused-local-binds #-}
+{-# OPTIONS_GHC -Wno-incomplete-patterns #-}
 module DaySixteen.DaySixteen
 ( mainDaySixteen
 , testDaySixteen
@@ -37,15 +38,44 @@ mapping = do
 input :: FilePath -> IO String
 input path = mapping >>= \x -> concat . mapMaybe (`lookup` x) <$> readFile path
 
+
+testInput :: FilePath -> IO [String]
+testInput path = mapping >>= \x -> fmap (concat . mapMaybe (`lookup` x)) <$> getLines path
+
 mainDaySixteen :: IO ()
 mainDaySixteen = putStrLn "Day Sixteen..." >> problemOne >> problemTwo >> putStrLn "Day Sixteen over.\n "
 
+-- [3,54,7,7,0,1,0,0] expected: [3,54,7,9,1,0,0,1]
 testDaySixteen :: IO ()
 testDaySixteen = do
     putStrLn "Test Day Sixteen..."
-    print "for 110100101111111000101000"
-    print . parse packetParser $ "110100101111111000101000"
-    putStrLn "Test Day Sixteen over.\n"
+    inp <- testInput testPath
+    mapM_ (print . parse packetParser) inp
+    print . fmap (\case
+      Left  pe -> error $ show pe
+      Right pa -> operate pa ) $ parse packetParser <$> inp
+    where
+    operate :: Packet -> Int
+    operate (Packet _ (Literal i))       = i
+    operate p@(Packet _ (Operator o li)) = case o of
+      Sum     -> sum     $ fmap operate li
+      Product -> product $ fmap operate li
+      Min     -> case typ $ p `minP` foldl1 minP li of
+        Literal  n     -> n
+        Operator _ pas -> error $ "This should never happen..  " ++ show pas
+      Max     -> case typ $ p `minP` foldl1 maxP li of
+        Literal  n     -> n
+        Operator _ pas -> error $ "This should never happen..  " ++ show pas
+      GrT     -> greater p
+      LeT     -> less    p
+      EQT     -> equal   p
+      where
+        greater :: Packet -> Int
+        greater (Packet _ (Operator _ [x1, x2])) = if x1 < x2 then 1 else 0
+        less :: Packet -> Int
+        less (Packet _ (Operator _ [x1, x2]))    = if x1 > x2 then 1 else 0
+        equal :: Packet -> Int
+        equal (Packet _ (Operator _ [x1, x2]))   = if x1 == x2 then 1 else 0
 
 
 problemOne :: IO ()
@@ -62,18 +92,55 @@ sumNums packet = go (version packet) (typ packet)
     where
     go :: Int -> Type -> Int
     go i t = case t of
-      Literal  _   -> i
-      Operator pas -> i + foldl (\acc p -> go (acc + version p) (typ p)) 0 pas
+      Literal  _     -> i
+      Operator _ pas -> i + foldl (\acc p -> go (acc + version p) (typ p)) 0 pas
 
 problemTwo :: IO ()
-problemTwo = print "to be impl"
+problemTwo = do
+    inp <- input testPath
+    print . (\case
+      Left  pe -> error $ show pe
+      Right pa -> operate pa ) . parse packetParser $ inp
+    where
+    operate :: Packet -> Int
+    operate (Packet _ (Literal i))       = i
+    operate p@(Packet _ (Operator o li)) = case o of
+      Sum     -> sum     $ fmap operate li
+      Product -> product $ fmap operate li
+      Min     -> case typ $ p `minP` foldl1 minP li of
+        Literal  n     -> n
+        Operator _ pas -> error $ "This should never happen..  " ++ show pas
+      Max     -> case typ $ p `maxP` foldl1 maxP li of
+        Literal  n     -> n
+        Operator _ pas -> error $ "This should never happen..  " ++ show pas
+      GrT     -> greater p
+      LeT     -> less    p
+      EQT     -> equal   p
+      where
+        greater :: Packet -> Int
+        greater (Packet _ (Operator _ [x1, x2])) = if x1 < x2 then 1 else 0
+        less :: Packet -> Int
+        less (Packet _ (Operator _ [x1, x2]))    = if x1 > x2 then 1 else 0
+        equal :: Packet -> Int
+        equal (Packet _ (Operator _ [x1, x2]))   = if x1 == x2 then 1 else 0
+        
 
 type Version = Int
 type Length  = Int
 
+data OID
+    = Sum      -- ^ the sum operator
+    | Product  -- ^ the product operator
+    | Min      -- ^ the minimum operator
+    | Max      -- ^ the maximum operator
+    | GrT      -- ^ the greater than operator
+    | LeT      -- ^ the less than operator
+    | EQT      -- ^ the equal to operator
+    deriving (Show, Read, Eq)
+
 data Type
     = Literal  Int
-    | Operator [Packet]
+    | Operator OID [Packet]
     deriving (Show, Read)
 
 data Packet = Packet
@@ -81,6 +148,57 @@ data Packet = Packet
             , typ     :: Type
             } deriving (Show, Read)
 
+-- Part 2 is really easy in Haskell, you just need to give your data some instances
+-- Num, Eq, Ord
+
+instance Eq Packet where
+  Packet _ (Literal     i) == Packet _ (Literal    j) = i == j
+  Packet _ (Operator oo i) == Packet _ (Operator o j) = i == j && oo == o
+  Packet _ _ == Packet _ _                            = False
+
+instance Ord Packet where
+  Packet _ (Literal i)     `compare` Packet _ (Literal i')     = compare i i'
+  Packet _ (Operator _ li) `compare` Packet _ (Operator _ li') = compare li li'
+  _ `compare` _              = error "Cannot compare different Operator Types!"
+
+-- is a Semigroup / Monoid instance interesting?
+
+instance Num Packet where
+  Packet _ (Literal i)     + Packet _ (Literal ii)    = Packet 0 (Literal $ i + ii)
+  Packet _ (Operator _ li) + packet                   = sum li + packet
+  packet                   + Packet _ (Operator _ li) = sum li + packet
+
+  Packet _ (Literal i)     * Packet _ (Literal ii)    = Packet 0 (Literal $ i * ii)
+  packet                   * Packet _ (Operator _ li) = packet * product li
+  Packet _ (Operator _ li) * packet                   = product li * packet
+
+  abs (Packet _ (Literal i))     = Packet 0 (Literal . abs $ i)
+  abs (Packet _ (Operator o li)) = Packet 0 (Operator o $ map abs li)
+
+  signum (Packet _ (Literal i))     = Packet 0 (Literal . signum $ i)
+  signum (Packet _ (Operator o li)) = Packet 0 (Operator o $ map signum li)
+
+  fromInteger i                                       = Packet 0 . Literal . fromInteger $ i
+
+  negate (Packet _ (Literal i))     = Packet 0 (Literal . negate $ i)
+  negate (Packet _ (Operator o li)) = Packet 0 (Operator o $ map negate li)
+
+-- I am not 100% convinced that min/max functions work as expected
+minP :: Packet -> Packet -> Packet
+p@(Packet _ (Literal i)) `minP` pp@(Packet _ (Literal ii)) =
+    if i < ii
+        then p
+        else pp
+Packet _ (Operator _ i) `minP` packet = minimum i `minP` packet
+packet `minP` Packet _ (Operator _ i) = minimum i `minP` packet
+
+maxP :: Packet -> Packet -> Packet
+p@(Packet _ (Literal i)) `maxP` pp@(Packet _ (Literal ii)) =
+    if ii < i
+        then p
+        else pp
+Packet _ (Operator _ i) `maxP` packet = maximum i `maxP` packet
+packet `maxP` Packet _ (Operator _ i) = maximum i `maxP` packet
 
 packetParser :: ParsecT String u Identity Packet
 packetParser = Packet <$> versionParser <*> typeParser
@@ -92,6 +210,16 @@ versionParser = do
     c3 <- P.anyChar
     pure $ binToDec [c1, c2, c3]
 
+numToOID :: Int -> OID
+numToOID 0 = Sum
+numToOID 1 = Product
+numToOID 2 = Min
+numToOID 3 = Max
+numToOID 5 = GrT
+numToOID 6 = LeT
+numToOID 7 = EQT
+numToOID i = error $ "Couldn't parse int to OID, with num" ++ show i
+
 typeParser :: ParsecT String u Identity Type
 typeParser = do
     c1 <- P.anyChar
@@ -99,7 +227,7 @@ typeParser = do
     c3 <- P.anyChar
     if binToDec [c1, c2, c3] == 4
         then Literal . binToDec <$> groupParser
-        else Operator <$> do
+        else Operator (numToOID . binToDec $ [c1, c2, c3]) <$> do
             len <- P.anyChar
             if len == '1'
                 then elevenOperator          -- 1 11 next bits represent the number of sub-packets immediately contained
@@ -154,5 +282,28 @@ takeFour = do
     c4 <- P.anyChar
     pure [c1, c2, c3, c4]
 
+--xs
+{-
+    Packet:
+    VVV--TTT--
+    The last trailing 0 bits are not part of the number
     where
+        V is the Version
+        T is the Type ID (4 is literal value, else operator)
+        where
+            literal values encode a single binary number
+                    its length is always a multiple of 4
+            where
+                number consists of groups
+                groups start either with 1 or if its the last with 0,
+                            these are not counted into the equation
+                        The remaining bits represent the binary number.
+            operator contains packets
+                     Have a 'length type id' after the 'VVV--TTT--V'
+                     where
+                        'length type id'    starts with either 1 or 0
+                                            1 11 next bits represent the number of sub-packets immediately contained
+                                            0 15 next bits represent the total length in bits
+                     then they contain sub-packets which are structured the same way
+-}
 
