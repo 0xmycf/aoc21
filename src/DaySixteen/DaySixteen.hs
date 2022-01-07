@@ -61,7 +61,7 @@ sumNums :: Packet -> Int
 sumNums packet = go (version packet) (typ packet)
     where
     go :: Int -> Type -> Int
-    go i t = case t of
+    go i = \case 
       Literal  _     -> i
       Operator _ pas -> i + foldl (\acc p -> go (acc + version p) (typ p)) 0 pas
 
