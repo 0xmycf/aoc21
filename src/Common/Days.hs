@@ -66,6 +66,7 @@ initDay = do
         else do
             createDirectoryIfMissing True ("./src/Day" ++ show dayNum ++ "/")
             writeFile ("./src/Day" ++ show dayNum ++ "/" ++ "Day" ++ show dayNum ++ ".hs") fileTemplate
+            writeFile ("./inputs/test/Day" ++ show dayNum ++ ".txt") "test input"
             let dayAsInteger = pure . toInteger .  fromEnum $ dayNum
             promptBlock dayAsInteger *> inputBlock dayAsInteger
             dayAsInteger >>= \x ->
