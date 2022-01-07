@@ -54,28 +54,6 @@ testDaySixteen = do
     print . fmap (\case
       Left  pe -> error $ show pe
       Right pa -> operate pa ) $ parse packetParser <$> inp
-    where
-    operate :: Packet -> Int
-    operate (Packet _ (Literal i))       = i
-    operate p@(Packet _ (Operator o li)) = case o of
-      Sum     -> sum     $ fmap operate li
-      Product -> product $ fmap operate li
-      Min     -> case typ $ p `minP` foldl1 minP li of
-        Literal  n     -> n
-        Operator _ pas -> error $ "This should never happen..  " ++ show pas
-      Max     -> case typ $ p `minP` foldl1 maxP li of
-        Literal  n     -> n
-        Operator _ pas -> error $ "This should never happen..  " ++ show pas
-      GrT     -> greater p
-      LeT     -> less    p
-      EQT     -> equal   p
-      where
-        greater :: Packet -> Int
-        greater (Packet _ (Operator _ [x1, x2])) = if x1 < x2 then 1 else 0
-        less :: Packet -> Int
-        less (Packet _ (Operator _ [x1, x2]))    = if x1 > x2 then 1 else 0
-        equal :: Packet -> Int
-        equal (Packet _ (Operator _ [x1, x2]))   = if x1 == x2 then 1 else 0
 
 
 problemOne :: IO ()
@@ -97,33 +75,33 @@ sumNums packet = go (version packet) (typ packet)
 
 problemTwo :: IO ()
 problemTwo = do
-    inp <- input testPath
+    inp <- input inputPath
     print . (\case
       Left  pe -> error $ show pe
       Right pa -> operate pa ) . parse packetParser $ inp
-    where
-    operate :: Packet -> Int
-    operate (Packet _ (Literal i))       = i
-    operate p@(Packet _ (Operator o li)) = case o of
-      Sum     -> sum     $ fmap operate li
-      Product -> product $ fmap operate li
-      Min     -> case typ $ p `minP` foldl1 minP li of
-        Literal  n     -> n
-        Operator _ pas -> error $ "This should never happen..  " ++ show pas
-      Max     -> case typ $ p `maxP` foldl1 maxP li of
-        Literal  n     -> n
-        Operator _ pas -> error $ "This should never happen..  " ++ show pas
-      GrT     -> greater p
-      LeT     -> less    p
-      EQT     -> equal   p
-      where
-        greater :: Packet -> Int
-        greater (Packet _ (Operator _ [x1, x2])) = if x1 < x2 then 1 else 0
-        less :: Packet -> Int
-        less (Packet _ (Operator _ [x1, x2]))    = if x1 > x2 then 1 else 0
-        equal :: Packet -> Int
-        equal (Packet _ (Operator _ [x1, x2]))   = if x1 == x2 then 1 else 0
-        
+
+operate :: Packet -> Int
+operate (Packet _ (Literal i))       = i
+operate p@(Packet _ (Operator o li)) = case o of
+  Sum     -> sum     $ fmap operate li
+  Product -> product $ fmap operate li
+  Min     -> let folded = foldl1 minP li in case typ folded of
+    Literal  n  -> n
+    _           -> operate folded 
+  Max     -> let folded = foldl1 maxP li in case typ folded of
+    Literal  n -> n
+    _          -> operate folded
+  GrT     -> greater p
+  LeT     -> less    p
+  EQT     -> equal   p
+  where
+    greater :: Packet -> Int
+    greater (Packet _ (Operator _ [x1, x2])) = if operate x1 > operate x2 then 1 else 0
+    less :: Packet -> Int
+    less (Packet _ (Operator _ [x1, x2]))    = if operate x1 < operate x2 then 1 else 0
+    equal :: Packet -> Int
+    equal (Packet _ (Operator _ [x1, x2]))   = if operate x1 == operate x2 then 1 else 0
+
 
 type Version = Int
 type Length  = Int
@@ -154,7 +132,7 @@ data Packet = Packet
 instance Eq Packet where
   Packet _ (Literal     i) == Packet _ (Literal    j) = i == j
   Packet _ (Operator oo i) == Packet _ (Operator o j) = i == j && oo == o
-  Packet _ _ == Packet _ _                            = False
+  _ == _                                              = False
 
 instance Ord Packet where
   Packet _ (Literal i)     `compare` Packet _ (Literal i')     = compare i i'
@@ -282,7 +260,6 @@ takeFour = do
     c4 <- P.anyChar
     pure [c1, c2, c3, c4]
 
---xs
 {-
     Packet:
     VVV--TTT--
