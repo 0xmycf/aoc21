@@ -39,6 +39,7 @@ extra-deps:
   - advent-of-code-api-0.2.8.1@sha256:00a7b1fe76bdbba0ad705d906402fbb35eb35ccb6f9a7adec488a65bb8147ad4,2352
   - finitary-2.1.1.0@sha256:f0f19aace424e5fdb5543fbcfb9446e50c8cb349fe7564642c5c25dbe3418076,2743
   - finite-1.4.1.2@sha256:9e41353b5ab053b5c937c13ec2ded6dcddb70e1f29204be4dd6bf683bb2b47c7,1931
+  - easyplot-1.0@sha256:3fec6ccf425b370ab668eb342bc4cd92777880653e27a982db7b225fd007cb2b,1936
   # - directory-1.3.6.0
   # - matrix-0.3.6.1
   # - containers-0.6.5.1

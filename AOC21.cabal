@@ -33,6 +33,7 @@ library
       DayFourteen.DayFourteen
       DayNine.DayNine
       DaySeven.DaySeven
+      DaySeventeen.DaySeventeen
       DaySix.DaySix
       DaySixteen.DaySixteen
       DayTen.DayTen
@@ -60,6 +61,7 @@ library
     , base >=4.7 && <5
     , containers
     , directory
+    , easyplot
     , finitary
     , finite
     , heaps
@@ -96,6 +98,7 @@ executable AOC21-exe
     , advent-of-code-api
     , base >=4.7 && <5
     , containers
+    , easyplot
     , finitary
     , finite
     , heaps
@@ -132,6 +135,7 @@ test-suite AOC21-test
     , advent-of-code-api
     , base >=4.7 && <5
     , containers
+    , easyplot
     , finitary
     , finite
     , heaps
@@ -165,6 +169,7 @@ benchmark AOC21-bench
     , base >=4.7 && <5
     , containers
     , criterion
+    , easyplot
     , finitary
     , finite
     , heaps

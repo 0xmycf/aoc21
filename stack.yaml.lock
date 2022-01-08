@@ -25,6 +25,13 @@ packages:
       sha256: 968f07afaa32f02571b841661b53baa21b037f2a38ff57b87524ecb0b062a0db
   original:
     hackage: finite-1.4.1.2@sha256:9e41353b5ab053b5c937c13ec2ded6dcddb70e1f29204be4dd6bf683bb2b47c7,1931
+- completed:
+    hackage: easyplot-1.0@sha256:3fec6ccf425b370ab668eb342bc4cd92777880653e27a982db7b225fd007cb2b,1936
+    pantry-tree:
+      size: 219
+      sha256: a5de94b54a51732bf70a601fca8c905fe074ecf870ea573db36d53a3bbb282f4
+  original:
+    hackage: easyplot-1.0@sha256:3fec6ccf425b370ab668eb342bc4cd92777880653e27a982db7b225fd007cb2b,1936
 snapshots:
 - completed:
     size: 586296
