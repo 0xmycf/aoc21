@@ -30,7 +30,8 @@ data Input = Input
 type Velocity = Point
 
 data SampleState = SState
-    { velocity :: Velocity
+    { initval  :: Velocity -- ^ the velocity with what the trajectory started
+    , velocity :: Velocity
     , point    :: Point
     } deriving (Show)
 
@@ -39,7 +40,10 @@ data SampleState = SState
 --   I will write an actual Parser some other time...
 --   let inputs = <$> readFile path
 input :: FilePath -> IO Input
-input path = pure $ Input { x=[241, 273], y=[-97, 63] }
+input _ = pure $ Input { x=[241, 273], y=[-97, -63] }
+
+tInput :: FilePath -> IO Input
+tInput _ = pure $ Input { x=[20, 30], y=[-10, -5] }
 
 mkField :: Input -> Set Point
 mkField (Input [x0,x1] [y0,y1]) = S.fromList [V2 x' y' | x' <- [x0..x1], y' <- [y0..y1]]
@@ -54,8 +58,8 @@ rangeParser = S.fromList . toRange . splitOn ".."
     toRange _      = error "Something went wrong at toRange"
 
 oneStep :: SampleState -> SampleState
-oneStep (SState (V2 0 y) (V2 a b)) = SState (V2 0 (y-1)) (V2 a (b+y))
-oneStep (SState (V2 x y) (V2 a b)) = SState (V2 ((abs x - 1) * signum x) (y - 1)) (V2 (a+x) (b+y))
+oneStep (SState v (V2 0 y) (V2 a b)) = SState v (V2 0 (y-1)) (V2 a (b+y))
+oneStep (SState v (V2 x y) (V2 a b)) = SState v (V2 ((abs x - 1) * signum x) (y - 1)) (V2 (a+x) (b+y))
 
 -- | This gives you the n-th velocity of the starting velocity
 getIthVelo :: Int -> Velocity -> Velocity
@@ -67,18 +71,18 @@ getIthVelo n (V2 x y) = V2 ((abs x - n) * signum x * sig' (abs x - n)) (y - n)
 -- | given a Point this function returns the the first y negative trajectory point
 --  (if the initial y velocity was positive)
 func :: Point -> SampleState
-func (V2 a n) = (!! (n * 2 + 2)) . iterate oneStep $ SState (V2 a n) 0
+func p@(V2 a n) = (!! (n * 2 + 2)) . iterate oneStep $ SState p (V2 a n) 0
 
 mainDaySeventeen :: IO ()
 mainDaySeventeen = putStrLn "Day Seventeen..." >> input inputPath >>= print . (problemOne &&& problemTwo) >> putStrLn "Day Seventeen over.\n "
 
 testDaySeventeen :: IO ()
-testDaySeventeen = putStrLn "Day Seventeen..." >> input testPath >>= print . (problemOne &&& problemTwo) >> putStrLn "Day Seventeen over.\n "
+testDaySeventeen = putStrLn "Day Seventeen..." >> tInput testPath >>= print . (problemOne &&& problemTwo) >> putStrLn "Day Seventeen over.\n "
 
-problemOne :: Input -> Int
+problemOne :: Input -> (Point, Int)
 problemOne inp =
-    let bounds = [V2 a b | b <- [1..(abs . minimum . y $ inp)], a <- [(1::Int)..(maximum . x $ inp)]]
-    in  triag . foldl' findMax 0 $ bounds
+    let bounds = [V2 a b | b <- [1..(abs . minimum . y $ inp)], a <- [(1::Int)..((`div` 2) . subtract 2 . maximum . x $ inp)]]
+    in  (id &&& triag) (foldl' findMax 0 bounds)
     where
     field  = mkField inp
     findMax :: Point -> Point -> Point
@@ -89,5 +93,31 @@ problemOne inp =
     triag :: Point -> Int
     triag (V2 _ y') = y' * (y' + 1) `div` 2
 
-problemTwo :: Input -> String
-problemTwo = const "to be impl"
+data PosState = Flying | Behind deriving (Show, Eq)
+
+problemTwo :: Input -> Int
+problemTwo inp = do
+        let bounds = [V2 a b
+                     | b <- [(minimum . y $ inp)..(abs . minimum . y $ inp)]
+                     , a <- [0..(maximum . x $ inp)]
+                     ]
+        foldl' findAll 0 bounds
+        where
+        field :: Set Point
+        field = mkField inp
+        findAll :: Int -> Point -> Int
+        findAll acc p = let steps = iterate oneStep (SState p p 0)
+                        in  if anyHits steps
+                               then 1 + acc
+                               else acc
+        anyHits :: [SampleState] -> Bool
+        anyHits (x' : xs)
+          | point x' `S.member` field       = True
+          | (behind . point $ x') == Behind = False
+          | otherwise                       = anyHits xs
+        anyHits _ = error "That really shoudln't happen"
+        behind :: Point -> PosState
+        behind (V2 x' y') = if x' > (maximum . x $ inp) || y' < (minimum . y $ inp)
+                               then Behind
+                               else Flying
+
