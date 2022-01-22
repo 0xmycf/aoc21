@@ -14,7 +14,7 @@ import           Data.Maybe            (mapMaybe)
 import           Prelude               hiding (lookup)
 import           Text.Parsec           (ParsecT)
 import qualified Text.Parsec           as P
-import Data.Foldable (foldl')
+import           Data.Foldable         (foldl')
 
 inputPath :: FilePath
 inputPath = "./inputs/auto/input/2021/DaySixteen.txt"
@@ -97,7 +97,7 @@ operate p@(Packet _ (Operator o li)) = case o of
   LeT     -> compare' (<)  p
   EQT     -> compare' (==) p
   where
-    compare' :: (Int -> Int -> Bool) -> Packet -> Int -- 144595909277
+    compare' :: (Int -> Int -> Bool) -> Packet -> Int
     compare' f (Packet _ (Operator _ [x1, x2])) = if operate x1 `f` operate x2 then 1 else 0
     compare' _ _                                = error "Operator will always be Operator"
 

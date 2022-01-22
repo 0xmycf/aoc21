@@ -73,3 +73,7 @@ getNeighbors (V2 a b) = [V2 a (b-1), V2 (a+1) b, V2 a (b+1), V2 (a-1) b]
 -- | gets neighbors parallel to x/y axis as well as the vectors in 45 degree angle relative to those.
 getAllNeighbs :: V2  Int -> [V2  Int]
 getAllNeighbs (V2 a b) = [V2 a (b-1), V2 (a-1) (b-1) , V2 (a+1) b, V2 (a+1) (b+1), V2 a (b+1), V2 (a-1) (b+1), V2 (a-1) b, V2 (a+1) (b-1)]
+
+updiv :: Integral a => a -> a -> a
+updiv a b = if a `mod` b == 0 then a `div` b else (a `div` b) + 1
+

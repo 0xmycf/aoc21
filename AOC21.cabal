@@ -28,6 +28,7 @@ library
       Common.Graph
       Common.Lib
       DayEight.DayEight
+      DayEighteen.DayEighteen
       DayEleven.DayEleven
       DayFifteen.DayFifteen
       DayFourteen.DayFourteen

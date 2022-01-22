@@ -14,11 +14,11 @@ import           DaySix.DaySix            (mainDaySix, testDaySix)
 import           DayThree.DayThree        (mainDayThree, testDayThree)
 import           DayTwo.First.DayTwoFirst (mainDayTwo, testDayTwo)
 
+import           Advent                   (Part (Part1))
 import           Common.Days              (inputBlock, promptBlock, submitBlock)
 import qualified Common.Days              as Days
-import System.Exit (exitSuccess)
-import Advent (Part(Part1))
-import DayFifteen.DayFifteen (mainDayFifteen, testDayFifteen)
+import           DayFifteen.DayFifteen    (mainDayFifteen, testDayFifteen)
+import           System.Exit              (exitSuccess)
 
 main :: IO ()
 main = do
@@ -46,7 +46,7 @@ main = do
       "9"       -> mainDayNine      -- main 9
       "9t"      -> testDayNine
       "15"      -> mainDayFifteen   -- main 15
-      "15t"     -> testDayFifteen 
+      "15t"     -> testDayFifteen
       "prompt"  -> let day = print "Please enter a Day Number" *> (fromMaybe 1 . readMaybe <$> getLine) in promptBlock day
       "input"   -> let day = print "Please enter a Day Number" *> (fromMaybe 1 . readMaybe <$> getLine) in inputBlock day
       "submit"  -> let day = print "Please enter a Day Number" *> (fromMaybe 1 . readMaybe <$> getLine)
@@ -57,7 +57,7 @@ main = do
       "bm"      -> print "Please use 'stack bench' for that!"
       "new"     -> let bl = putStrLn "Are you sure you want to create a new day? (True/False)" *> (fromMaybe False . readMaybe <$> getLine) in do
                             bl >>= (\x -> if x then Days.initDay else putStrLn "" *> main)
-      "e"       -> exitSuccess    
+      "e"       -> exitSuccess
       "exit"    -> exitSuccess
       "q"       -> exitSuccess
       "quit"    -> exitSuccess
