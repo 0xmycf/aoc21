@@ -172,8 +172,7 @@ testDayEighteen :: IO ()
 testDayEighteen = putStrLn "Day Eighteen..." >> input testPath >>= print . (problemOne &&& problemTwo) >> putStrLn "Day Eighteen over.\n "
 
 problemOne :: Input -> Int
-problemOne inp = do
-    magnitude . foldl1 (<>) $ inp
+problemOne = magnitude . foldl1 (<>)
 
 -- Debug function that yields all intermediate states of the computation
 writeMe :: IO ()
@@ -182,6 +181,8 @@ writeMe = do
     let foo = scanl1 (<>) inp
     writeFile outPath (show foo)
 
-problemTwo :: Input -> String
-problemTwo = const "to be impl"
+-- | Very inefficient... but the fastest thing I could think of
+problemTwo :: Input -> Int
+--problemTwo inp = maximum $ (\(a,b) -> fmap magnitude [a <> b, b <> a]) =<< [(a,b) | a <- inp, b <- inp, a /= b]
+problemTwo inp = maximum $ fmap (magnitude . uncurry (<>)) [(a,b) | a <- inp, b <- inp, a /= b] -- this doesn't take the absence of commutativity in
 
