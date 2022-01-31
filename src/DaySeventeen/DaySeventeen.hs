@@ -22,6 +22,8 @@ testPath  = "./inputs/test/DaySeventeen.txt"
 outPath :: FilePath
 outPath = "./inputs/test/parsedout/DaySeventeen.txt"
 
+arison = "target area: x=217..240, y=-126..-69"
+
 data Input = Input
             { x :: [Int]
             , y :: [Int]
@@ -43,7 +45,7 @@ input :: FilePath -> IO Input
 input _ = pure $ Input { x=[241, 273], y=[-97, -63] }
 
 tInput :: FilePath -> IO Input
-tInput _ = pure $ Input { x=[20, 30], y=[-10, -5] }
+tInput _ = pure $ Input { x=[217, 240], y=[-126, -69] }
 
 mkField :: Input -> Set Point
 mkField (Input [x0,x1] [y0,y1]) = S.fromList [V2 x' y' | x' <- [x0..x1], y' <- [y0..y1]]
@@ -68,7 +70,7 @@ getIthVelo n (V2 x y) = V2 ((abs x - n) * signum x * sig' (abs x - n)) (y - n)
             | x' <= 0   = 0
             | otherwise = 1
 
--- | given a Point this function returns the the first y negative trajectory point
+-- | given a Point this function returns the first y negative trajectory point
 --  (if the initial y velocity was positive)
 func :: Point -> SampleState
 func p@(V2 a n) = (!! (n * 2 + 2)) . iterate oneStep $ SState p (V2 a n) 0
@@ -93,8 +95,6 @@ problemOne inp =
     triag :: Point -> Int
     triag (V2 _ y') = y' * (y' + 1) `div` 2
 
-data PosState = Flying | Behind deriving (Show, Eq)
-
 problemTwo :: Input -> Int
 problemTwo inp = do
         let bounds = [V2 a b
@@ -107,17 +107,13 @@ problemTwo inp = do
         field = mkField inp
         findAll :: Int -> Point -> Int
         findAll acc p = let steps = iterate oneStep (SState p p 0)
-                        in  if anyHits steps
-                               then 1 + acc
-                               else acc
-        anyHits :: [SampleState] -> Bool
+                        in  anyHits steps + acc
+        anyHits :: [SampleState] -> Int
         anyHits (x' : xs)
-          | point x' `S.member` field       = True
-          | (behind . point $ x') == Behind = False
-          | otherwise                       = anyHits xs
-        anyHits _ = error "That really shoudln't happen"
-        behind :: Point -> PosState
-        behind (V2 x' y') = if x' > (maximum . x $ inp) || y' < (minimum . y $ inp)
-                               then Behind
-                               else Flying
+          | point x' `S.member` field = 1
+          | (behind . point $ x')     = 0
+          | otherwise                 = anyHits xs
+        anyHits _ = error "That really shouldn't happen"
+        behind :: Point -> Bool
+        behind (V2 x' y') = x' > (maximum . x $ inp) || y' < (minimum . y $ inp)
 
