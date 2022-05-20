@@ -18,6 +18,7 @@ import           Advent                   (Part (Part1))
 import           Common.Days              (inputBlock, promptBlock, submitBlock)
 import qualified Common.Days              as Days
 import           DayFifteen.DayFifteen    (mainDayFifteen, testDayFifteen)
+import           DayNineteen.DayNineteen  (mainDayNineteen, testDayNineteen)
 import           System.Exit              (exitSuccess)
 
 main :: IO ()
@@ -47,6 +48,8 @@ main = do
       "9t"      -> testDayNine
       "15"      -> mainDayFifteen   -- main 15
       "15t"     -> testDayFifteen
+      "19"      -> mainDayNineteen  -- main 19
+      "19t"     -> testDayNineteen
       "prompt"  -> let day = print "Please enter a Day Number" *> (fromMaybe 1 . readMaybe <$> getLine) in promptBlock day
       "input"   -> let day = print "Please enter a Day Number" *> (fromMaybe 1 . readMaybe <$> getLine) in inputBlock day
       "submit"  -> let day = print "Please enter a Day Number" *> (fromMaybe 1 . readMaybe <$> getLine)

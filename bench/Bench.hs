@@ -1,12 +1,9 @@
 {-# OPTIONS_GHC -Wno-unused-top-binds #-}
 {-# OPTIONS_GHC -Wno-name-shadowing #-}
-
-{-# OPTIONS_GHC -Wno-unused-top-binds #-}
-{-# OPTIONS_GHC -Wno-name-shadowing #-}
-import           Criterion               (bench, bgroup, nfIO)
-import qualified Criterion.Main          as CMain
-import qualified DayFifteen.DayFifteen   as DayFifteen
-import qualified DaySixteen.DaySixteen   as DaySixteen
+import           Criterion             (bench, bgroup, nfIO)
+import qualified Criterion.Main        as CMain
+import qualified DayFifteen.DayFifteen as DayFifteen
+import qualified DaySixteen.DaySixteen as DaySixteen
 
 
 main :: IO ()
