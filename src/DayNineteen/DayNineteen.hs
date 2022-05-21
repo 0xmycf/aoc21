@@ -3,26 +3,13 @@ module DayNineteen.DayNineteen
 , testDayNineteen
 ) where
 
-import           Common.Lib            (Point, frequencyMap, getLines, updiv)
-import           Control.Arrow         ((&&&))
-import           Control.Monad         (guard)
-import           Data.Either           (partitionEithers)
-import           Data.Foldable         (Foldable (toList))
-import           Data.Functor          (($>), (<&>))
-import           Data.Functor.Identity (Identity)
-import           Data.List             (group, intersect, nub, sort, transpose,
-                                        uncons, (\\))
-import qualified Data.List             as List
-import           Data.List.Split       (splitOn)
-import qualified Data.Map              as Map
-import           Data.Maybe            (catMaybes, fromJust, isJust)
-import           Data.Set              (Set)
-import qualified Data.Set              as Set
-import           Linear.Matrix         as Mat (M33, (!*))
-import           Linear.V3             (V3 (..))
-import qualified Text.Parsec           as Parsec
-
-type Parser u a = Parsec.ParsecT String u Identity a
+import           Control.Arrow   ((&&&))
+import           Data.Either     (partitionEithers)
+import           Data.List       (nub, permutations, transpose)
+import           Data.List.Split (splitOn)
+import qualified Data.Map        as Map
+import           Linear.Matrix   as Mat (M33, (!*))
+import           Linear.V3       (V3 (..))
 
 inputPath :: FilePath
 inputPath = "./inputs/auto/input/2021/DayNineteen.txt"
@@ -46,13 +33,20 @@ type Input = [[V3 Int]]
   After some iterations of the compareAllScanners function the
   code crashes, due to an empty composite scanner, yet i cannot figure out why this would happen.
 
+  Also thanks to all other people who posted their solutions on the r/haskell subreddit...
+  I was in desperate need for this day D:
+
 -}
+
+-- i am not too proud about this either, since this is not 100% my code D: this day was rough on me
+perms :: [M33 Int]
+perms = [V3 (x * sgnx) (y * sgny) (z * sgnz) | let sgn = [1,-1], sgnx <- sgn, sgny <- sgn, sgnz <- sgn, [x,y,z] <- permutations [V3 1 0 0, V3 0 1 0, V3 0 0 1]]
 
 -- I am not proud... This is not the math way
 -- perms v =  fmap (Mat.!* v) [
 -- after cross examination, i found that this somehow leads to an error
-perms :: [M33 Int]
-perms = [
+perms2 :: [V3 (V3 Int)]
+perms2 = [
             -- first id, +
             V3 (V3 1 0 0)
                (V3 0 1 0)
@@ -231,10 +225,6 @@ mainDayNineteen = putStrLn "Day Nineteen..." >> input inputPath >>= print . (pro
 testDayNineteen :: IO ()
 testDayNineteen = putStrLn "Day Nineteen..." >> input testPath >>= print . (problemOne &&& problemTwo) >> putStrLn "Day Nineteen over.\n "
 
--- < 1496
--- < 748 fuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuck
--- == 350 but not by my solving...
--- > 193
 problemOne :: [[V3 Int]] -> String
 problemOne (i:np) = show . resolve . compareAllScanners [(i, 0)] [i] $ np
   where
@@ -249,15 +239,12 @@ permsToVariants = transpose . fmap (\v -> fmap (Mat.!* v) perms)
 compareTwoScanners :: [V3 Int] -> [V3 Int] -> [(Scanner, V3 Int)]
 compareTwoScanners scannerA scannerB = [(fmap (+ offset) variant, offset)
                                         | variant <- permsToVariants scannerB
-                                        , offset <- overlap scannerA variant
+                                        , offset  <- overlap scannerA variant
                                        ]
                                          where
                                            overlap :: Scanner -> Scanner -> [V3 Int]
-                                           overlap a b = map fst . filter (\(_, count) -> count >= 12) . Map.toList . frequencyMap $
+                                           overlap a b = Map.keys . Map.filter (>= (12 :: Int)) . Map.fromListWith (+) . map (,1) $
                                              (-) <$> a <*> b
-
-
-
 
 safehead :: [a] -> Maybe a
 safehead (x:_) = pure x
@@ -273,7 +260,11 @@ compareAllScanners visited (ref:refs) scanners =
 compareAllScanners visited [] scanners = error $ "refs empty" ++ ( show .length $ scanners ) ++ ":scanners|visited:" ++ (show .length $ visited)
 
 problemTwo :: Input -> String
-problemTwo = const "to be impl"
+problemTwo (i:np) = show . resolve . compareAllScanners [(i, 0)] [i] $ np
+  where
+    resolve mp = maximum [ manhattan scannerA scannerB | let offsets = Map.elems mp, scannerA <- offsets, scannerB <- offsets]
+    manhattan = ((sum . fmap abs) .) . (-)
+problemTwo _   = "No input given"
 
 {-
     Parsing
