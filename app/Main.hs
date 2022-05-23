@@ -19,6 +19,8 @@ import           Common.Days              (inputBlock, promptBlock, submitBlock)
 import qualified Common.Days              as Days
 import           DayFifteen.DayFifteen    (mainDayFifteen, testDayFifteen)
 import           DayNineteen.DayNineteen  (mainDayNineteen, testDayNineteen)
+import           DayTwenty.DayTwenty      (mainDayTwenty, testDayTwenty)
+import qualified DayTwenty.DayTwenty      as DayTwenty
 import           System.Exit              (exitSuccess)
 
 main :: IO ()
@@ -50,6 +52,9 @@ main = do
       "15t"     -> testDayFifteen
       "19"      -> mainDayNineteen  -- main 19
       "19t"     -> testDayNineteen
+      "20"      -> mainDayTwenty    -- main 20
+      "20t"     -> testDayTwenty
+      "202"     -> DayTwenty.problemTwo
       "prompt"  -> let day = print "Please enter a Day Number" *> (fromMaybe 1 . readMaybe <$> getLine) in promptBlock day
       "input"   -> let day = print "Please enter a Day Number" *> (fromMaybe 1 . readMaybe <$> getLine) in inputBlock day
       "submit"  -> let day = print "Please enter a Day Number" *> (fromMaybe 1 . readMaybe <$> getLine)

@@ -45,6 +45,7 @@ dependencies:
 - split
 - heaps
 - easyplot
+- async
 
 ghc-options:
 - -Wall

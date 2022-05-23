@@ -41,6 +41,7 @@ library
       DayTen.DayTen
       DayThirteen.DayThirteen
       DayTwelve.DayTwelve
+      DayTwenty.DayTwenty
       Old.DayFiveSrc
       Old.DayFiveSrcPartTwo
       Old.DayFourSrc
@@ -60,6 +61,7 @@ library
   ghc-options: -Wall
   build-depends:
       advent-of-code-api
+    , async
     , base >=4.7 && <5
     , containers
     , directory
@@ -98,6 +100,7 @@ executable AOC21-exe
   build-depends:
       AOC21
     , advent-of-code-api
+    , async
     , base >=4.7 && <5
     , containers
     , easyplot
@@ -135,6 +138,7 @@ test-suite AOC21-test
       AOC21
     , QuickCheck
     , advent-of-code-api
+    , async
     , base >=4.7 && <5
     , containers
     , easyplot
@@ -168,6 +172,7 @@ benchmark AOC21-bench
   build-depends:
       AOC21
     , advent-of-code-api
+    , async
     , base >=4.7 && <5
     , containers
     , criterion
