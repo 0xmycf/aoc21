@@ -79,6 +79,7 @@ tests:
     dependencies:
     - AOC21
     - QuickCheck
+    - hspec
 
 benchmarks:
   AOC21-bench:

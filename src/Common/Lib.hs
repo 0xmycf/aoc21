@@ -74,6 +74,10 @@ getNeighbors (V2 a b) = [V2 a (b-1), V2 (a+1) b, V2 a (b+1), V2 (a-1) b]
 getAllNeighbs :: V2  Int -> [V2  Int]
 getAllNeighbs (V2 a b) = [V2 a (b-1), V2 (a-1) (b-1) , V2 (a+1) b, V2 (a+1) (b+1), V2 a (b+1), V2 (a-1) (b+1), V2 (a-1) b, V2 (a+1) (b-1)]
 
+-- | gets all Points in a 3x3 field, where the center is the input Point
+getNine :: V2 Int -> [V2 Int]
+getNine (V2 a b) = [V2 x y | x <- [a-1, a, a+1], y <- [b-1, b, b+1]]
+
 updiv :: Integral a => a -> a -> a
 updiv a b = if a `mod` b == 0 then a `div` b else (a `div` b) + 1
 

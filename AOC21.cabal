@@ -145,6 +145,7 @@ test-suite AOC21-test
     , finitary
     , finite
     , heaps
+    , hspec
     , linear
     , matrix
     , parsec
