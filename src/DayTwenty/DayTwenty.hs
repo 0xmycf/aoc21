@@ -6,6 +6,7 @@ module DayTwenty.DayTwenty
 ) where
 
 import           Common.Lib               (Point, mapIdx)
+import           Control.Arrow            ((&&&))
 import           Control.Concurrent.Async (mapConcurrently)
 import           Data.List                (sort, unfoldr)
 import           Data.List.Split          (splitOn)
@@ -50,20 +51,30 @@ input path = let inputs = parse <$> readFile path
              in  inputs
 
 mainDayTwenty :: IO ()
-mainDayTwenty = putStrLn "Day Twenty..." >> input inputPath >>= print . problemOne >> putStrLn "Day Twenty over.\n "
+mainDayTwenty = putStrLn "Day Twenty..." >> input inputPath >>= print . (problemOne &&& problemTwo) . enhance >> putStrLn "Day Twenty over.\n "
 
--- concurrent haskell :handsup:
-problemTwo :: IO ()
-problemTwo = input inputPath >>= (\(alg, img) ->  sequenceA . unfoldr (\((b, c) :: (IO Img, Int)) -> if c == 51 then Nothing else Just (b, (fmapimg alg b , c + 1))) $ (pure img, 0))
-              >>= (print . countLit . (!! 50))
-  where fmapimg alg b = b >>= (`mapImgConcurr` alg)
-
+-- concurrent haskell :handsup: this made it much slower lmao
+-- problemTwo :: IO ()
+-- problemTwo = input inputPath >>= (\(alg, img) ->  sequenceA . unfoldr (\((b, c) :: (IO Img, Int)) -> if c == 51 then Nothing else Just (b, (fmapimg alg b , c + 1))) $ (pure img, 0))
+--               >>= (print . countLit . (!! 50))
+--   where fmapimg alg b = b >>= (`mapImgConcurr` alg)
 
 testDayTwenty :: IO ()
-testDayTwenty = putStrLn "Day Twenty..." >> input testPath >>= print . problemOne >> putStrLn "Day Twenty over.\n "
+testDayTwenty = putStrLn "Day Twenty..." >> input testPath >>= print . (problemOne &&& problemTwo) . enhance >> putStrLn "Day Twenty over.\n "
 
-problemOne :: Input -> String
-problemOne (alg, img) = show . countLit $ flip mapImg alg $ mapImg img alg
+problemOne :: [Img] -> String
+problemOne = show . countLit . (!! 2)
+
+problemTwo :: [Img] -> String
+problemTwo = show . countLit . (!! 50)
+
+enhance :: Input -> [Img]
+enhance (alg, img) = unfoldr (\(b :: Img) -> Just (b, fmapimg b)) img
+  where fmapimg = flip mapImg alg
+
+solveFor :: Int -> Input -> String
+solveFor n (alg, img) = show . countLit . (!! n) . unfoldr (\(b :: Img) -> Just (b, fmapimg b)) $ img
+  where fmapimg = flip mapImg alg
 
 mapImg :: Img -> Alg -> Img
 mapImg wimg@(Img img infs) alg = Img (Map.mapWithKey (\key _ -> (alg Map.!) . bitArrToInt . retrieveNine wimg $ key) expanded) (opposite infs)

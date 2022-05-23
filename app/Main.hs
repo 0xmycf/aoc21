@@ -54,7 +54,6 @@ main = do
       "19t"     -> testDayNineteen
       "20"      -> mainDayTwenty    -- main 20
       "20t"     -> testDayTwenty
-      "202"     -> DayTwenty.problemTwo
       "prompt"  -> let day = print "Please enter a Day Number" *> (fromMaybe 1 . readMaybe <$> getLine) in promptBlock day
       "input"   -> let day = print "Please enter a Day Number" *> (fromMaybe 1 . readMaybe <$> getLine) in inputBlock day
       "submit"  -> let day = print "Please enter a Day Number" *> (fromMaybe 1 . readMaybe <$> getLine)

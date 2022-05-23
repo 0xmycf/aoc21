@@ -96,7 +96,7 @@ executable AOC21-exe
       TupleSections
       BlockArguments
       ScopedTypeVariables
-  ghc-options: -Wall -threaded -rtsopts -with-rtsopts=-N
+  ghc-options: -Wall -threaded -eventlog -rtsopts "-with-rtsopts=-N"
   build-depends:
       AOC21
     , advent-of-code-api
