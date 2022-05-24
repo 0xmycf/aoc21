@@ -1,4 +1,5 @@
 {-# OPTIONS_GHC -Wno-type-defaults #-}
+{-# OPTIONS_GHC -Wno-incomplete-patterns #-}
 module Main where
 
 import           Data.Maybe               (fromMaybe)
